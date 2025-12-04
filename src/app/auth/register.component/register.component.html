@@ -1,0 +1,26 @@
+<h2>Créer un compte</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Email :</label>
+    <input type="email" formControlName="email">
+  </div>
+
+  <div>
+    <label>Mot de passe :</label>
+    <input type="password" formControlName="password">
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">
+    S'inscrire
+  </button>
+</form>
+
+<p *ngIf="errorMessage">
+  {{ errorMessage }}
+</p>
+
+<p>
+  Déjà un compte ?
+  <a routerLink="/login">Se connecter</a>
+</p>

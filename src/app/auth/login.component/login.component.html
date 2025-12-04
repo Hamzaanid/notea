@@ -1,0 +1,26 @@
+<h2>Connexion</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Email :</label>
+    <input type="email" formControlName="email">
+  </div>
+
+  <div>
+    <label>Mot de passe :</label>
+    <input type="password" formControlName="password">
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">
+    Se connecter
+  </button>
+</form>
+
+<p *ngIf="errorMessage">
+  {{ errorMessage }}
+</p>
+
+<p>
+  Pas de compte ?
+  <a routerLink="/register">Créer un compte</a>
+</p>
