@@ -1,20 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `
-    <h2>Accueil</h2>
-    <p>Vous êtes connecté.</p>
-    <button (click)="onLogout()">Se déconnecter</button>
-  `
+  templateUrl: './header.html',
+  styleUrls: ['./header.scss'],
 })
-export class HomeComponent {
-
+export class HeaderComponent {
+  // Pour l'instant on ne gère pas encore user connecté/pas connecté
+  // on le fera après
   constructor(
     private authService: AuthService,
     private router: Router
