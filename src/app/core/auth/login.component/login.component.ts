@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.services/auth.service';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './register.component.html'
+  templateUrl: './login.component.html'
 })
-export class RegisterComponent {
+export class LoginComponent {
   form: FormGroup;
   errorMessage = '';
 
@@ -21,7 +21,7 @@ export class RegisterComponent {
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', Validators.required],
     });
   }
 
@@ -32,15 +32,18 @@ export class RegisterComponent {
 
     const { email, password } = this.form.value;
 
-    this.authService.register(email, password).subscribe({
-      next: () => {
+    this.authService.login(email, password).subscribe({
+      next: (user) => {
+        if (!user.user.emailVerified) {
+        this.errorMessage = "Veuillez vérifier votre email avant de vous connecter.";
+        return;
+    }
         this.errorMessage = '';
-        alert("Un email de vérification vous a été envoyé. Merci de vérifier votre boite mail.");
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = 'Erreur lors de la création du compte.';
+        this.errorMessage = 'Identifiants incorrects ou erreur de connexion.';
       }
     });
   }

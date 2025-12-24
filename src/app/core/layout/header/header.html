@@ -1,27 +1,62 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg notea-navbar">
   <div class="container">
 
     <!-- Logo -->
-    <a class="navbar-brand fw-bold text-primary" routerLink="/">Notea</a>
+    <a class="navbar-brand brand-text" routerLink="/">
+      NÔTÉA
+    </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#noteaNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav ms-auto">
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="noteaNavbar">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
 
+        <!-- 🔥 ÉLÉMENTS COMMUNS (avant & après connexion) -->
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">Home</a>
+          <a class="nav-link nav-text" routerLink="/nouveautes">
+            Nouveauté
+          </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" routerLink="/profile">Profil</a>
+          <a class="nav-link nav-text" routerLink="/best-sellers">
+            Best Sellers
+          </a>
         </li>
 
         <li class="nav-item">
-          <button class="btn btn-danger ms-2" (click)="onLogout()">Logout</button>
+          <a class="nav-link nav-text" routerLink="/test-personnalite">
+            Test personnalité
+          </a>
         </li>
+
+        <!-- 🔥 APRÈS CONNEXION -->
+        <ng-container *ngIf="isLoggedIn">
+          <li class="nav-item">
+            <a class="nav-link nav-text" routerLink="/favoris">
+              Favoris
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- 🔥 BOUTON CONNEXION / DÉCONNEXION -->
+        <li class="nav-item ms-lg-3" *ngIf="!isLoggedIn; else logoutBtn">
+          <a class="btn btn-outline-light login-btn" routerLink="/login">
+            Connexion
+          </a>
+        </li>
+
+        <ng-template #logoutBtn>
+          <li class="nav-item ms-lg-3">
+            <button class="btn btn-outline-danger" (click)="logout()">
+              Déconnexion
+            </button>
+          </li>
+        </ng-template>
 
       </ul>
     </div>

@@ -1,0 +1,70 @@
+/* FOND LUXE SOMBRE */
+.auth-container {
+  background: linear-gradient(to bottom, #0a0a0c, #140e0a, #2b1a12);
+  color: #eae6d7;
+  font-family: 'Georgia', serif;
+}
+
+/* CARTE TRANSLUCIDE PREMIUM */
+.auth-card {
+  width: 380px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* TITRE LUXE */
+.auth-title {
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: #dde4d1;
+}
+
+/* LABEL */
+.auth-label {
+  color: #eae6d7;
+  font-size: 15px;
+}
+
+/* INPUT MODERNE */
+.auth-input {
+  background: #1d1d20;
+  border: 1px solid #3a3a3d;
+  color: #eaeaea;
+  padding: 10px;
+}
+
+.auth-input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 6px rgba(34,197,94,0.6);
+}
+
+/* BOUTON */
+.auth-btn {
+  background: #22c55e;
+  color: #0a0a0c;
+  padding: 10px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.auth-btn:hover {
+  background: #1faa55;
+}
+
+/* LIENS */
+.auth-link {
+  color: #22c55e;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* TEXTE PETIT */
+.auth-text-small {
+  color: #dcd7c9;
+}

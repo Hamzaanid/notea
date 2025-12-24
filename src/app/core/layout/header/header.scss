@@ -1,0 +1,57 @@
+.notea-navbar {
+  background: #050608;        // fond noir
+  padding: 16px 0;
+  font-family: 'Georgia', serif;
+  border-bottom: 1px solid #1f2937;
+}
+
+.brand-text {
+  font-size: 32px;
+  letter-spacing: 4px;
+  color: #22c55e !important;  // logo vert
+}
+
+.nav-text {
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #e5e7eb !important;  // gris très clair
+  margin-left: 18px;
+}
+
+.nav-text:hover {
+  color: #22c55e !important;  // hover vert
+}
+
+.dropdown-menu {
+  background-color: #050608;
+  border: 1px solid #1f2937;
+}
+
+.dropdown-item {
+  color: #e5e7eb !important;
+}
+
+.dropdown-item:hover {
+  background: #111827;
+  color: #22c55e !important;
+}
+
+.login-btn {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.login-btn:hover {
+  background-color: #22c55e;
+  color: #050608;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .brand-text {
+    font-size: 24px;
+  }
+  .nav-text {
+    margin: 8px 0;
+  }
+}

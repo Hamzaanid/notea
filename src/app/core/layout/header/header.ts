@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../../auth/auth.service';
+import { AuthService } from '../../auth/services/auth.services/auth.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-header',
@@ -11,14 +12,16 @@ import { AuthService } from '../../../auth/auth.service';
   styleUrls: ['./header.scss'],
 })
 export class HeaderComponent {
-  // Pour l'instant on ne gère pas encore user connecté/pas connecté
-  // on le fera après
+  isLoggedIn = false;
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private auth: Auth,
+  ) {
+      this.isLoggedIn = !!this.auth.currentUser;
+  }
 
-  onLogout() {
+  logout() {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/login']);
     });

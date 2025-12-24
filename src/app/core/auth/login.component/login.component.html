@@ -1,0 +1,45 @@
+<div class="auth-container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="auth-card shadow-lg">
+
+    <h2 class="text-center auth-title mb-4">Connexion</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label auth-label">Email</label>
+        <input type="email"
+               formControlName="email"
+               class="form-control auth-input"
+               placeholder="exemple@mail.com">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label auth-label">Mot de passe</label>
+        <input type="password"
+               formControlName="password"
+               class="form-control auth-input"
+               placeholder="••••••••">
+      </div>
+
+      <button type="submit"
+              class="btn auth-btn w-100"
+              [disabled]="form.invalid">
+        Se connecter
+      </button>
+    </form>
+
+    <!-- Error -->
+    <p *ngIf="errorMessage" class="text-danger text-center mt-3">
+      {{ errorMessage }}
+    </p>
+
+    <!-- Register redirect -->
+    <p class="text-center mt-3 auth-text-small">
+      Pas de compte ?
+      <a routerLink="/register" class="auth-link">Créer un compte</a>
+    </p>
+
+  </div>
+</div>

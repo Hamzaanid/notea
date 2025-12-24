@@ -1,0 +1,54 @@
+<div class="container text-center mt-5">
+
+  <!-- BEST SELLERS -->
+  <h2 class="section-title">BEST-SELLERS</h2>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-light"></div>
+  </div>
+
+  <!-- After login : dynamic products -->
+  <div class="row justify-content-center g-4" *ngIf="isLoggedIn && !loading">
+
+    <div class="col-12 col-md-4" *ngFor="let p of bestSellers">
+      <div class="card product-card shadow">
+
+        <img [src]="p.image" class="card-img-top product-img">
+
+        <div class="card-body">
+          <h6 class="brand">{{ p.brand }}</h6>
+          <h5 class="name">{{ p.name }}</h5>
+          <p class="price">{{ p.price }}</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Before login : static -->
+  <div class="row justify-content-center g-4" *ngIf="!isLoggedIn">
+    <div class="col-12 col-md-4" *ngFor="let img of ['perfume1.png','perfume2.png','perfume3.png']">
+      <div class="card product-card shadow">
+        <img [src]="'assets/' + img" class="card-img-top product-img">
+        <div class="card-body">
+          <h5 class="name">Parfum exclusif</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-outline-light btn-lg mt-3">
+    REMPLIR LE FORMULAIRE
+  </a>
+
+
+  <!-- PARTNERS -->
+  <h2 class="section-title mt-5">NOS PARTENAIRES</h2>
+  <div class="partners">
+    <span>SEPHORA</span>
+    <span>NOCIBÉ</span>
+    <span>DOUGLAS</span>
+  </div>
+
+</div>

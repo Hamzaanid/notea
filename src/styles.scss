@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  background: #050608;        // noir très sombre
+  color: #f8fafc;             // texte clair par défaut
+  font-family: 'Georgia', serif;
+}
+
+/* Petite classe utilitaire pour le vert Notea */
+.notea-green {
+  color: #22c55e;             // vert lumineux
+}
