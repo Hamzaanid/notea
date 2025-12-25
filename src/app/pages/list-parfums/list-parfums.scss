@@ -1,30 +1,14 @@
-/* Le container général, on le laisse transparent pour voir le fond sombre global */
 :host {
   display: block;
   padding-bottom: 40px;
 }
 
-/* Logo Notea */
-.notea-logo {
-  font-size: 40px;
-  letter-spacing: 4px;
-  margin-bottom: 32px;
-  color: #22c55e;           // vert
-}
-
-/* Titres de sections */
 .section-title {
   font-size: 26px;
   margin-bottom: 16px;
-  color: #22c55e;           // vert
+  color: #22c55e;
 }
 
-/* Sous-titre */
-.subtitle {
-  color: #9ca3af;           // gris
-}
-
-/* Cartes produits */
 .product-card {
   background: #0b0f19;
   border: 1px solid #1f2937;
@@ -49,15 +33,28 @@
   color: #e5e7eb;
 }
 
-.price {
-  font-size: 20px;
-  font-weight: bold;
-  color: #22c55e;          // prix vert
+.meta {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 13px;
 }
 
-/* Partenaires */
 .partners span {
   margin: 0 14px;
   font-weight: 600;
   color: #e5e7eb;
+}
+
+.pagination-info {
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.pagination-info .muted {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.green {
+  color: #22c55e;
 }

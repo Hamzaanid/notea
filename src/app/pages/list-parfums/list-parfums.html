@@ -1,0 +1,79 @@
+<div class="container text-center mt-5">
+
+  <h4 class="section-title">Liste de parfums</h4>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-light"></div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMsg && !loading" class="alert alert-dark border border-secondary mt-3">
+    <span class="text-light">{{ errorMsg }}</span>
+  </div>
+
+  <!-- After login -->
+  <div class="row justify-content-center g-4" *ngIf="isLoggedIn && !loading && !errorMsg">
+
+    <div class="col-12 col-md-4 col-lg-3" *ngFor="let p of perfumes; trackBy: trackById">
+      <div class="card product-card shadow">
+
+        <img
+          [src]="p.image"
+          class="card-img-top product-img"
+          (error)="onImgError($event)"
+        />
+        <div class="card-body">
+          <h6 class="brand">{{ p.brand }}</h6>
+          <h5 class="name">{{ p.name }}</h5>
+
+          <p class="meta" *ngIf="p.quantity">{{ p.quantity }}</p>
+          <p class="meta" *ngIf="p.popularity">Popularity: {{ p.popularity }}</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pagination bar -->
+    <div class="col-12 mt-4 d-flex justify-content-center align-items-center gap-3">
+      <button class="btn btn-outline-light" (click)="prev()" [disabled]="page <= 1">
+        ◀ Précédent
+      </button>
+
+      <div class="pagination-info">
+        Page <span class="green">{{ page }}</span> / {{ pageCount }}
+        <span class="muted"> • {{ total }} résultats</span>
+      </div>
+
+      <button class="btn btn-outline-light" (click)="next()" [disabled]="page >= pageCount">
+        Suivant ▶
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Before login : static -->
+  <div class="row justify-content-center g-4" *ngIf="!isLoggedIn">
+    <div class="col-12 col-md-4" *ngFor="let img of ['perfume1.png','perfume2.png','perfume3.png']">
+      <div class="card product-card shadow">
+        <img [src]="'assets/' + img" class="card-img-top product-img">
+        <div class="card-body">
+          <h5 class="name">Parfum exclusif</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-outline-light btn-lg mt-3">
+    REMPLIR LE FORMULAIRE
+  </a>
+
+  <!-- PARTNERS -->
+  <h2 class="section-title mt-5">NOS PARTENAIRES</h2>
+  <div class="partners">
+    <span>SEPHORA</span>
+    <span>NOCIBÉ</span>
+    <span>DOUGLAS</span>
+  </div>
+
+</div>

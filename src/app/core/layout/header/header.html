@@ -2,7 +2,7 @@
   <div class="container">
 
     <!-- Logo -->
-    <a class="navbar-brand brand-text" routerLink="/">
+    <a class="navbar-brand brand-text" routerLink="/home">
       NÔTÉA
     </a>
 
@@ -17,27 +17,26 @@
 
         <!-- 🔥 ÉLÉMENTS COMMUNS (avant & après connexion) -->
         <li class="nav-item">
-          <a class="nav-link nav-text" routerLink="/nouveautes">
-            Nouveauté
+          <a class="nav-link nav-text" routerLink="/home">
+            Accueil
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link nav-text" routerLink="/best-sellers">
-            Best Sellers
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link nav-text" routerLink="/test-personnalite">
-            Test personnalité
+          <a class="nav-link nav-text" routerLink="/ListParfums">
+            Catalog
           </a>
         </li>
 
         <!-- 🔥 APRÈS CONNEXION -->
         <ng-container *ngIf="isLoggedIn">
           <li class="nav-item">
-            <a class="nav-link nav-text" routerLink="/favoris">
+          <a class="nav-link nav-text" routerLink="/test-personnalite">
+            Test personnalité
+          </a>
+        </li>
+          <li class="nav-item">
+            <a class="nav-link nav-text" routerLink="/Favoris">
               Favoris
             </a>
           </li>
