@@ -1,38 +1,57 @@
-<div class="auth-container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="auth-card shadow-lg">
+<div class="auth-container">
+  <div class="auth-card">
 
-    <h2 class="text-center auth-title mb-4">Créer un compte</h2>
+    <h2 class="auth-title">Créer un compte</h2>
+    <p class="auth-subtitle">Rejoignez l'univers Nôtéa</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-      <div class="mb-3">
-        <label class="form-label auth-label">Email</label>
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label">Email</label>
         <input type="email"
-               class="form-control auth-input"
                formControlName="email"
-               placeholder="exemple@mail.com">
+               class="form-input"
+               placeholder="votre@email.com"
+               [class.error]="form.get('email')?.invalid && form.get('email')?.touched">
+        <span class="form-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+          Email invalide
+        </span>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label auth-label">Mot de passe</label>
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
         <input type="password"
-               class="form-control auth-input"
                formControlName="password"
-               placeholder="••••••••">
+               class="form-input"
+               placeholder="Min. 6 caractères"
+               [class.error]="form.get('password')?.invalid && form.get('password')?.touched">
+        <span class="form-error" *ngIf="form.get('password')?.errors?.['minlength'] && form.get('password')?.touched">
+          Minimum 6 caractères requis
+        </span>
       </div>
 
       <button type="submit"
-              class="btn auth-btn w-100"
-              [disabled]="form.invalid">
-        S'inscrire
+              class="auth-btn"
+              [disabled]="form.invalid || loading">
+        <span *ngIf="!loading">S'inscrire</span>
+        <span *ngIf="loading" class="loading-text">Création...</span>
       </button>
     </form>
 
-    <p *ngIf="errorMessage" class="text-danger text-center mt-3">
-      {{ errorMessage }}
-    </p>
+    <!-- Success -->
+    <div class="auth-success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
 
-    <p class="text-center mt-3 auth-text-small">
+    <!-- Error -->
+    <div class="auth-error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Login redirect -->
+    <p class="auth-footer">
       Déjà un compte ?
       <a routerLink="/login" class="auth-link">Se connecter</a>
     </p>

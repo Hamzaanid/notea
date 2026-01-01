@@ -1,45 +1,93 @@
-<div class="auth-container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="auth-card shadow-lg">
+<div class="auth-container">
+  <div class="auth-card">
 
-    <h2 class="text-center auth-title mb-4">Connexion</h2>
+    <h2 class="auth-title">Connexion</h2>
+    <p class="auth-subtitle">Accédez à votre espace personnel</p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
       <!-- Email -->
-      <div class="mb-3">
-        <label class="form-label auth-label">Email</label>
+      <div class="form-group">
+        <label class="form-label">Email</label>
         <input type="email"
                formControlName="email"
-               class="form-control auth-input"
-               placeholder="exemple@mail.com">
+               class="form-input"
+               placeholder="votre@email.com"
+               [class.error]="form.get('email')?.invalid && form.get('email')?.touched">
+        <span class="form-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+          Email invalide
+        </span>
       </div>
 
       <!-- Password -->
-      <div class="mb-3">
-        <label class="form-label auth-label">Mot de passe</label>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
         <input type="password"
                formControlName="password"
-               class="form-control auth-input"
-               placeholder="••••••••">
+               class="form-input"
+               placeholder="••••••••"
+               [class.error]="form.get('password')?.invalid && form.get('password')?.touched">
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="forgot-password">
+        <button type="button" class="forgot-link" (click)="openResetModal()">
+          Mot de passe oublié ?
+        </button>
       </div>
 
       <button type="submit"
-              class="btn auth-btn w-100"
-              [disabled]="form.invalid">
-        Se connecter
+              class="auth-btn"
+              [disabled]="form.invalid || loading">
+        <span *ngIf="!loading">Se connecter</span>
+        <span *ngIf="loading" class="loading-text">Connexion...</span>
       </button>
     </form>
 
+    <!-- Success -->
+    <div class="auth-success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
     <!-- Error -->
-    <p *ngIf="errorMessage" class="text-danger text-center mt-3">
+    <div class="auth-error" *ngIf="errorMessage">
       {{ errorMessage }}
-    </p>
+    </div>
 
     <!-- Register redirect -->
-    <p class="text-center mt-3 auth-text-small">
-      Pas de compte ?
+    <p class="auth-footer">
+      Pas encore de compte ?
       <a routerLink="/register" class="auth-link">Créer un compte</a>
     </p>
 
+  </div>
+</div>
+
+<!-- Modal Reset Password -->
+<div class="modal-overlay" *ngIf="showResetModal" (click)="closeResetModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <button class="modal-close" (click)="closeResetModal()">×</button>
+    
+    <h3 class="modal-title">Réinitialiser le mot de passe</h3>
+    <p class="modal-subtitle">Entrez votre email pour recevoir un lien de réinitialisation</p>
+    
+    <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email"
+               formControlName="email"
+               class="form-input"
+               placeholder="votre@email.com">
+      </div>
+      
+      <button type="submit"
+              class="auth-btn"
+              [disabled]="resetForm.invalid || resetLoading">
+        <span *ngIf="!resetLoading">Envoyer le lien</span>
+        <span *ngIf="resetLoading" class="loading-text">Envoi...</span>
+      </button>
+    </form>
+    
   </div>
 </div>

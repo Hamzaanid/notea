@@ -1,119 +1,85 @@
-<div class="home"><section class="hero">
-    <div class="container text-center">
+<div class="home">
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
       <h1 class="hero-title">
-        Le parfum qui vous <span class="green">ressemble</span>
+        <span class="line">Évoquez chaque</span>
+        <span class="line">émotion avec</span>
+        <span class="line brand">NÔTÉA</span>
       </h1>
-
-      <div class="pill">NÔTÉA • Plateforme de recommandation de parfums</div>
-
-    
+      
       <p class="hero-subtitle">
-        Notea vous guide vers des parfums adaptés à votre personnalité, votre style et vos préférences.
-        Simple, rapide, et clair.
+        Découvrez les parfums adaptés à votre personnalité
       </p>
-
-      <div class="hero-tags">
-        <span>🎯 Personnalité</span>
-        <span>🌿 Préférences</span>
-        <span>✨ Recommandations</span>
-        <span>🧴 Parfums & images</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- C'EST QUOI NOTEa -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title text-center">C’est quoi Notea ?</h2>
-
-      <div class="info-card">
-        <p class="info-text">
-          Notea est une plateforme qui aide à choisir un parfum en fonction de votre profil.
-          Au lieu de chercher au hasard, vous obtenez une sélection cohérente avec votre personnalité
-          (discret, audacieux, élégant…) et vos goûts (frais, boisé, sucré, épicé…).
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMMENT ÇA MARCHE -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title text-center">Comment ça marche</h2>
-
-      <div class="row g-4 mt-2">
-        <div class="col-12 col-md-4">
-          <div class="card-notea">
-            <div class="icon">1</div>
-            <h3 class="card-title">Test</h3>
-            <p class="card-text">
-              Vous répondez à quelques questions simples sur votre personnalité et vos préférences.
-            </p>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-          <div class="card-notea">
-            <div class="icon">2</div>
-            <h3 class="card-title">Profil olfactif</h3>
-            <p class="card-text">
-              Notea crée votre “profil olfactif” (ex: frais-boisé, floral-doux, oriental-intense…).
-            </p>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-          <div class="card-notea">
-            <div class="icon">3</div>
-            <h3 class="card-title">Recommandations</h3>
-            <p class="card-text">
-              Vous obtenez une liste de parfums adaptés, avec une explication claire du “pourquoi”.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CE QUE TU PEUX FAIRE SUR NOTEa -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title text-center">Ce que vous pouvez faire sur Notea</h2>
-
-      <div class="features-grid">
-        <div class="feature-box">
-          <h3 class="feature-title">Explorer</h3>
-          <p class="feature-text">
-            Parcourir une liste de parfums, voir des images, et découvrir des tendances.
-          </p>
-        </div>
-
-        <div class="feature-box">
-          <h3 class="feature-title">Trouver votre style</h3>
-          <p class="feature-text">
-            Faire le test et comprendre votre profil : frais, boisé, sucré, épicé, etc.
-          </p>
-        </div>
-
-        <div class="feature-box">
-          <h3 class="feature-title">Sauvegarder</h3>
-          <p class="feature-text">
-            Après connexion : enregistrer vos favoris et suivre vos choix dans le temps.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="cta">
-    <div class="container text-center">
-      <h2 class="cta-title">Prêt à découvrir votre parfum signature ?</h2>
-      <p class="cta-text">Commencez par le test, c’est rapide.</p>
-
-      <a class="btn btn-outline-light btn-lg btn-primary-notea" routerLink="/test-personnalite">
-        Commencer maintenant
+      
+      <a class="hero-btn" routerLink="/test-personnalite">
+        <span class="btn-text">Remplir</span> le formulaire
       </a>
+    </div>
+    
+    <div class="hero-image">
+      <div class="perfume-glow"></div>
+      <img src="assets/perfume-hero.png" alt="Parfum Nôtéa" class="perfume-bottle" 
+           onerror="this.style.display='none'">
+    </div>
+  </section>
+
+  <!-- Selection Section -->
+  <section class="selection-section">
+    <h2 class="selection-title">Sélection de parfums par familles</h2>
+    
+    <div class="perfume-families">
+      <div class="family-item">
+        <div class="family-bottle amber"></div>
+        <span class="family-name">Ambré</span>
+      </div>
+      <div class="family-item">
+        <div class="family-bottle floral"></div>
+        <span class="family-name">Floral</span>
+      </div>
+      <div class="family-item">
+        <div class="family-bottle woody"></div>
+        <span class="family-name">Boisé</span>
+      </div>
+      <div class="family-item">
+        <div class="family-bottle fresh"></div>
+        <span class="family-name">Frais</span>
+      </div>
+      <div class="family-item">
+        <div class="family-bottle oriental"></div>
+        <span class="family-name">Oriental</span>
+      </div>
+    </div>
+    
+    <a routerLink="/ListParfums" class="view-all-btn">
+      Voir le catalogue
+    </a>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="about-content">
+      <h2 class="about-title">L'art de la parfumerie sur mesure</h2>
+      <p class="about-text">
+        Nôtéa vous guide vers des fragrances qui révèlent votre essence. 
+        À travers notre questionnaire personnalisé, découvrez les parfums 
+        qui correspondent à votre personnalité, vos goûts et vos émotions.
+      </p>
+      <div class="about-features">
+        <div class="feature">
+          <span class="feature-number">01</span>
+          <span class="feature-text">Test de personnalité</span>
+        </div>
+        <div class="feature">
+          <span class="feature-number">02</span>
+          <span class="feature-text">Profil olfactif unique</span>
+        </div>
+        <div class="feature">
+          <span class="feature-number">03</span>
+          <span class="feature-text">Recommandations sur mesure</span>
+        </div>
+      </div>
     </div>
   </section>
 

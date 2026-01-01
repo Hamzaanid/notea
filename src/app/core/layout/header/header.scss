@@ -1,57 +1,228 @@
-.notea-navbar {
-  background: #050608;        // fond noir
-  padding: 16px 0;
-  font-family: 'Georgia', serif;
-  border-bottom: 1px solid #1f2937;
+/* Header Luxe Ambré - Nôtéa */
+
+$gold: #d4a855;
+$gold-light: #f0d9a0;
+$cream: #faf3e8;
+$amber-dark: #1a0a04;
+$amber-deep: #2d1810;
+
+.notea-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  padding: 1.5rem 0;
+  transition: background 0.3s ease;
 }
 
-.brand-text {
-  font-size: 32px;
-  letter-spacing: 4px;
-  color: #22c55e !important;  // logo vert
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.nav-text {
-  font-size: 15px;
-  text-transform: uppercase;
-  color: #e5e7eb !important;  // gris très clair
-  margin-left: 18px;
+/* Left & Right Menus */
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
 }
 
-.nav-text:hover {
-  color: #22c55e !important;  // hover vert
+.nav-left {
+  justify-content: flex-start;
 }
 
-.dropdown-menu {
-  background-color: #050608;
-  border: 1px solid #1f2937;
+.nav-right {
+  justify-content: flex-end;
 }
 
-.dropdown-item {
-  color: #e5e7eb !important;
-}
-
-.dropdown-item:hover {
-  background: #111827;
-  color: #22c55e !important;
-}
-
-.login-btn {
-  border-color: #22c55e;
-  color: #22c55e;
-}
-
-.login-btn:hover {
-  background-color: #22c55e;
-  color: #050608;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .brand-text {
-    font-size: 24px;
+/* Logo Center */
+.nav-logo {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: 6px;
+  color: $gold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1002;
+  
+  &:hover {
+    color: $gold-light;
+    text-shadow: 0 0 30px rgba($gold, 0.5);
   }
-  .nav-text {
-    margin: 8px 0;
+}
+
+/* Nav Links */
+.nav-link {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $cream;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  
+  &:hover {
+    opacity: 1;
+    color: $gold-light;
+  }
+  
+  &.active {
+    color: $gold;
+    opacity: 1;
+  }
+  
+  &.logout-btn {
+    color: rgba($cream, 0.6);
+    
+    &:hover {
+      color: $gold-light;
+    }
+  }
+}
+
+/* Mobile Toggle */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002;
+  
+  span {
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    background: $gold;
+    transition: all 0.3s ease;
+  }
+  
+  &.active {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+  }
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: $amber-dark;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.mobile-link {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: $cream;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  
+  &:hover,
+  &.active {
+    opacity: 1;
+    color: $gold;
+  }
+  
+  &.logout-btn {
+    margin-top: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-style: normal;
+    letter-spacing: 3px;
+    opacity: 0.5;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .nav-left,
+  .nav-right {
+    display: none;
+  }
+  
+  .nav-toggle {
+    display: flex;
+  }
+  
+  .mobile-menu {
+    display: flex;
+  }
+  
+  .nav-container {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-logo {
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+  }
+  
+  .nav-container {
+    padding: 0 1rem;
+  }
+  
+  .notea-nav {
+    padding: 1rem 0;
+  }
+  
+  .mobile-link {
+    font-size: 1.25rem;
   }
 }

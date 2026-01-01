@@ -6,35 +6,39 @@ import { ListParfums } from './pages/list-parfums/list-parfums';
 import { TestPerso } from './pages/test-perso/test-perso';
 import { Profile } from './pages/profile/profile';
 import { Favoris } from './pages/favoris/favoris';
+import { Boutiques } from './pages/boutiques/boutiques';
 import { AuthGuard } from './core/guards/auth.guard';
-import { LayoutComponent } from './core/layout/layout/layout'; // ⬅️ ton layout
+import { LayoutComponent } from './core/layout/layout/layout';
 
 export const routes: Routes = [
-  // ⬇️ Pages sans layout (pas de header/footer)
-    {
+  // Redirection racine → home
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  
+  // Pages publiques (avec layout)
+  {
     path: '',
     component: LayoutComponent,
     children: [
+      { path: 'home', component: HomeComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'home', component: HomeComponent },
       { path: 'ListParfums', component: ListParfums },
-
     ]
   },
-  // ⬇️ Pages avec layout (header + footer)
+  
+  // Pages protégées (après connexion)
   {
     path: '',
-    component: LayoutComponent,      // ⬅️ ici on applique le layout
-    canActivate: [AuthGuard],        // ⬅️ protège tout ce bloc
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'test-personnalite', component: TestPerso },
       { path: 'profile', component: Profile },
       { path: 'Favoris', component: Favoris },
-      { path: '', redirectTo: 'home', pathMatch: 'full' }
+      { path: 'boutiques', component: Boutiques },
     ]
   },
 
-  // ⬇️ Route par défaut si URL inconnue
+  // Route par défaut (404 → home)
   { path: '**', redirectTo: 'home' }
 ];

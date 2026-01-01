@@ -1,70 +1,315 @@
-/* FOND LUXE SOMBRE */
+/* Login Styles - Luxe Ambré */
+
+$gold: #d4a855;
+$gold-light: #f0d9a0;
+$gold-dark: #b8922e;
+$cream: #faf3e8;
+$amber-dark: #1a0a04;
+$amber-deep: #2d1810;
+$amber-rich: #5c2a1a;
+$error: #e85c5c;
+$success: #5cb85c;
+
 .auth-container {
-  background: linear-gradient(to bottom, #0a0a0c, #140e0a, #2b1a12);
-  color: #eae6d7;
-  font-family: 'Georgia', serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 2rem 2rem;
+  background: 
+    radial-gradient(ellipse at 50% 30%, rgba($amber-rich, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba($amber-deep, 0.4) 0%, transparent 40%);
 }
 
-/* CARTE TRANSLUCIDE PREMIUM */
 .auth-card {
-  width: 380px;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  background: rgba($amber-dark, 0.6);
+  border: 1px solid rgba($gold, 0.15);
+  border-radius: 2px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 420px;
   backdrop-filter: blur(10px);
 }
 
-/* TITRE LUXE */
 .auth-title {
-  font-size: 28px;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  font-style: italic;
+  color: $gold-light;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.95rem;
+  color: rgba($cream, 0.5);
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: rgba($gold-light, 0.7);
+  margin-bottom: 0.5rem;
   letter-spacing: 2px;
-  color: #dde4d1;
+  text-transform: uppercase;
 }
 
-/* LABEL */
-.auth-label {
-  color: #eae6d7;
-  font-size: 15px;
+.form-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1rem;
+  color: $cream;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba($gold, 0.2);
+  border-radius: 2px;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  &::placeholder {
+    color: rgba($cream, 0.25);
+  }
+  
+  &:focus {
+    border-color: $gold;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  &.error {
+    border-color: $error;
+  }
 }
 
-/* INPUT MODERNE */
-.auth-input {
-  background: #1d1d20;
-  border: 1px solid #3a3a3d;
-  color: #eaeaea;
-  padding: 10px;
+.form-error {
+  display: block;
+  font-size: 0.8rem;
+  color: $error;
+  margin-top: 0.5rem;
 }
 
-.auth-input:focus {
-  border-color: #22c55e;
-  box-shadow: 0 0 6px rgba(34,197,94,0.6);
+/* Forgot Password */
+.forgot-password {
+  text-align: right;
+  margin-bottom: 1.5rem;
+  margin-top: -0.5rem;
 }
 
-/* BOUTON */
+.forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: rgba($cream, 0.5);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $gold;
+  }
+}
+
 .auth-btn {
-  background: #22c55e;
-  color: #0a0a0c;
-  padding: 10px;
-  font-weight: bold;
-  transition: 0.3s;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $amber-dark;
+  background: $gold-light;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  
+  &:hover:not(:disabled) {
+    background: $gold;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($gold, 0.25);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .loading-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &::after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border: 2px solid transparent;
+      border-top-color: $amber-dark;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
 }
 
-.auth-btn:hover {
-  background: #1faa55;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-/* LIENS */
+.auth-success {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba($success, 0.1);
+  border: 1px solid rgba($success, 0.3);
+  border-radius: 2px;
+  color: #7dce7d;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-error {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba($error, 0.1);
+  border: 1px solid rgba($error, 0.3);
+  border-radius: 2px;
+  color: #ff8080;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba($cream, 0.5);
+}
+
 .auth-link {
-  color: #22c55e;
+  color: $gold;
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $gold-light;
+  }
 }
 
-.auth-link:hover {
-  text-decoration: underline;
+/* ========================================
+   MODAL - Reset Password
+   ======================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($amber-dark, 0.9);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
 }
 
-/* TEXTE PETIT */
-.auth-text-small {
-  color: #dcd7c9;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: $amber-deep;
+  border: 1px solid rgba($gold, 0.2);
+  border-radius: 2px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid rgba($gold, 0.2);
+  border-radius: 50%;
+  color: rgba($cream, 0.6);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    border-color: $gold;
+    color: $gold;
+  }
+}
+
+.modal-title {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.35rem;
+  font-style: italic;
+  color: $gold-light;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.9rem;
+  color: rgba($cream, 0.5);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 100px 1rem 1rem;
+  }
+  
+  .auth-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+  
+  .modal-content {
+    padding: 2rem 1.5rem;
+  }
 }

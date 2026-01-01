@@ -8,11 +8,14 @@ import { AuthService } from '../services/auth.services/auth.service';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
   form: FormGroup;
   errorMessage = '';
+  successMessage = '';
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,17 +33,39 @@ export class RegisterComponent {
       return;
     }
 
+    this.loading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+    
     const { email, password } = this.form.value;
 
     this.authService.register(email, password).subscribe({
       next: () => {
-        this.errorMessage = '';
-        alert("Un email de vérification vous a été envoyé. Merci de vérifier votre boite mail.");
-        this.router.navigate(['/login']);
+        this.loading = false;
+        this.successMessage = "Un email de vérification vous a été envoyé. Vérifiez votre boîte mail.";
+        
+        // Redirection après 3 secondes
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       },
       error: (err) => {
+        this.loading = false;
         console.error(err);
-        this.errorMessage = 'Erreur lors de la création du compte.';
+        
+        switch (err.code) {
+          case 'auth/email-already-in-use':
+            this.errorMessage = 'Un compte existe déjà avec cet email.';
+            break;
+          case 'auth/invalid-email':
+            this.errorMessage = 'Email invalide.';
+            break;
+          case 'auth/weak-password':
+            this.errorMessage = 'Mot de passe trop faible (min. 6 caractères).';
+            break;
+          default:
+            this.errorMessage = 'Erreur lors de la création du compte.';
+        }
       }
     });
   }

@@ -1,0 +1,369 @@
+/* Boutiques Page - Luxe Ambré */
+
+$gold: #d4a855;
+$gold-light: #f0d9a0;
+$cream: #faf3e8;
+$amber-dark: #1a0a04;
+$amber-deep: #2d1810;
+
+.boutiques {
+  min-height: 100vh;
+  padding: 120px 2rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.boutiques-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.page-title {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 400;
+  font-style: italic;
+  color: $gold-light;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1.1rem;
+  color: rgba($cream, 0.6);
+}
+
+/* ========================================
+   SEARCH SECTION
+   ======================================== */
+
+.search-section {
+  margin-bottom: 2.5rem;
+}
+
+.geo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1rem;
+  color: $amber-dark;
+  background: $gold-light;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    background: $gold;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .geo-icon {
+    font-size: 1.2rem;
+  }
+}
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-label {
+  display: block;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: rgba($cream, 0.6);
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1rem;
+  color: $cream;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba($gold, 0.2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: $gold;
+  }
+  
+  option {
+    background: $amber-dark;
+    color: $cream;
+  }
+}
+
+.reset-btn {
+  padding: 0.875rem 1.25rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.9rem;
+  color: rgba($cream, 0.7);
+  background: transparent;
+  border: 1px solid rgba($gold, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    border-color: $gold;
+    color: $gold;
+  }
+}
+
+/* ========================================
+   LOADING & ERROR
+   ======================================== */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 4rem 2rem;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba($gold, 0.2);
+  border-top-color: $gold;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1rem;
+  color: rgba($cream, 0.6);
+  font-style: italic;
+}
+
+.error-container,
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  
+  p {
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 1rem;
+    color: rgba($cream, 0.6);
+    margin-bottom: 1rem;
+  }
+}
+
+.error-text {
+  color: #e88 !important;
+}
+
+/* ========================================
+   RESULTS
+   ======================================== */
+
+.results-section {
+  margin-top: 1rem;
+}
+
+.results-count {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.95rem;
+  color: rgba($cream, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+.stores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Store Card */
+.store-card {
+  background: rgba($amber-deep, 0.4);
+  border: 1px solid rgba($gold, 0.1);
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba($gold, 0.25);
+    transform: translateY(-2px);
+  }
+}
+
+.store-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba($gold, 0.08);
+}
+
+.store-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.store-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.store-name {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: $cream;
+  margin-bottom: 0.2rem;
+  line-height: 1.3;
+}
+
+.store-brand {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: $gold;
+  letter-spacing: 1px;
+}
+
+.store-distance {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: rgba($gold-light, 0.7);
+  background: rgba($gold, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.store-details {
+  margin-bottom: 1.25rem;
+}
+
+.store-address,
+.store-hours,
+.store-phone {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.9rem;
+  color: rgba($cream, 0.7);
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.detail-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.store-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 0.9rem;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  color: rgba($cream, 0.8);
+  background: transparent;
+  border: 1px solid rgba($gold, 0.15);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: $gold;
+    color: $gold;
+  }
+  
+  &.primary {
+    background: rgba($gold, 0.12);
+    border-color: rgba($gold, 0.25);
+    color: $gold;
+    
+    &:hover {
+      background: rgba($gold, 0.2);
+    }
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .boutiques {
+    padding: 100px 1rem 3rem;
+  }
+  
+  .filters-container {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .reset-btn {
+    width: 100%;
+  }
+  
+  .stores-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .store-actions {
+    flex-direction: column;
+    
+    .action-btn {
+      justify-content: center;
+    }
+  }
+}
