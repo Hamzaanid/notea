@@ -1,4 +1,4 @@
-/* Register Styles - Luxe Ambré */
+/* Register Styles - Luxe */
 
 $gold: #d4a855;
 $gold-light: #f0d9a0;
@@ -32,18 +32,19 @@ $success: #5cb85c;
 }
 
 .auth-title {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'Cinzel', 'Georgia', serif;
   font-size: 1.75rem;
-  font-weight: 400;
-  font-style: italic;
+  font-weight: 500;
   color: $gold-light;
   text-align: center;
   margin-bottom: 0.5rem;
+  letter-spacing: 2px;
 }
 
 .auth-subtitle {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 0.95rem;
+  font-weight: 400;
   color: rgba($cream, 0.5);
   text-align: center;
   margin-bottom: 2.5rem;
@@ -55,8 +56,9 @@ $success: #5cb85c;
 
 .form-label {
   display: block;
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 0.85rem;
+  font-weight: 500;
   color: rgba($gold-light, 0.7);
   margin-bottom: 0.5rem;
   letter-spacing: 2px;
@@ -66,8 +68,9 @@ $success: #5cb85c;
 .form-input {
   width: 100%;
   padding: 1rem 1.25rem;
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 1rem;
+  font-weight: 400;
   color: $cream;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba($gold, 0.2);
@@ -100,7 +103,7 @@ $success: #5cb85c;
   width: 100%;
   padding: 1rem;
   margin-top: 1rem;
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 2px;

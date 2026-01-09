@@ -8,20 +8,58 @@
         <span class="line">émotion avec</span>
         <span class="line brand">NÔTÉA</span>
       </h1>
-      
       <p class="hero-subtitle">
         Découvrez les parfums adaptés à votre personnalité
       </p>
-      
-      <a class="hero-btn" routerLink="/test-personnalite">
-        <span class="btn-text">Remplir</span> le formulaire
-      </a>
     </div>
     
-    <div class="hero-image">
+    <!-- <div class="hero-image">
       <div class="perfume-glow"></div>
       <img src="assets/perfume-hero.png" alt="Parfum Nôtéa" class="perfume-bottle" 
            onerror="this.style.display='none'">
+    </div> -->
+
+  </section>
+
+  <!-- Carousel Section -->
+  <section class="carousel-section">
+    <div class="carousel-container" 
+         (mouseenter)="stopAutoSlide()" 
+         (mouseleave)="startAutoSlide()">
+      
+      <!-- Slides -->
+      <div class="carousel-track" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+        <div class="carousel-slide" *ngFor="let slide of slides">
+          <div class="slide-image" [style.backgroundImage]="'url(' + slide.image + ')'"></div>
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <h3 class="slide-title">{{ slide.title }}</h3>
+            <p class="slide-subtitle">{{ slide.subtitle }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="carousel-btn prev" (click)="prevSlide()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="carousel-btn next" (click)="nextSlide()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+      <!-- Dots Indicator -->
+      <div class="carousel-dots">
+        <button 
+          *ngFor="let slide of slides; let i = index"
+          class="dot"
+          [class.active]="i === currentSlide"
+          (click)="goToSlide(i)">
+        </button>
+      </div>
     </div>
   </section>
 
@@ -80,6 +118,24 @@
           <span class="feature-text">Recommandations sur mesure</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- CTA Section - Formulaire en dernier -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <div class="cta-decoration">✦</div>
+      <h2 class="cta-title">Trouvez votre parfum idéal</h2>
+      <p class="cta-text">
+        Répondez à notre questionnaire personnalisé et découvrez 
+        les fragrances qui correspondent à votre personnalité unique.
+      </p>
+      <a class="cta-btn" routerLink="/test-personnalite">
+        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Remplir le formulaire
+      </a>
     </div>
   </section>
 

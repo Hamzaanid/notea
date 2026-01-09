@@ -6,24 +6,27 @@ import {
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
-// 🔹 Firebase
+// Firebase
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
-    //tes providers Angular existants
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
-    //ajout Firebase App (initialisation avec ta config)
+    
+    // Firebase App
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-
-    //ajout Firebase Auth (service d'authentification)
+    
+    // Firebase Auth
     provideAuth(() => getAuth()),
+    
+    // Firebase Firestore
+    provideFirestore(() => getFirestore()),
   ],
 };

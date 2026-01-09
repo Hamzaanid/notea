@@ -1,49 +1,100 @@
-<nav class="notea-nav">
+<nav class="notea-nav" [class.scrolled]="isScrolled">
   <div class="nav-container">
     
     <!-- Left Menu -->
     <div class="nav-left">
+      <!-- Toujours visible -->
+      <a class="nav-link" 
+         routerLink="/ListParfums" 
+         [class.active]="isActive('/ListParfums')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        Catalogue
+      </a>
+      <!-- Après connexion -->
       <a class="nav-link" 
          routerLink="/boutiques" 
          [class.active]="isActive('/boutiques')"
          *ngIf="isLoggedIn">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+        </svg>
         Boutiques
-      </a>
-      <a class="nav-link" 
-         routerLink="/test-personnalite" 
-         [class.active]="isActive('/test-personnalite')"
-         *ngIf="isLoggedIn">
-        Profil
       </a>
     </div>
 
     <!-- Logo Center (= Accueil) -->
     <a class="nav-logo" routerLink="/home" (click)="closeMenu()">
-      NÔTÉA
+      <svg class="logo-svg" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f0d9a0"/>
+            <stop offset="50%" style="stop-color:#d4a855"/>
+            <stop offset="100%" style="stop-color:#c49a4a"/>
+          </linearGradient>
+          <linearGradient id="goldGradientHover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#fff5e0"/>
+            <stop offset="50%" style="stop-color:#f0d9a0"/>
+            <stop offset="100%" style="stop-color:#d4a855"/>
+          </linearGradient>
+        </defs>
+        <!-- Goutte de parfum stylisée -->
+        <path class="logo-drop" d="M15 8 C15 8, 8 18, 8 24 C8 30, 12 34, 18 34 C24 34, 28 30, 28 24 C28 18, 21 8, 21 8 C19.5 5, 16.5 5, 15 8 Z" 
+              fill="url(#goldGradient)" opacity="0.9"/>
+        <ellipse class="logo-drop-shine" cx="14" cy="20" rx="3" ry="4" fill="#fff5e0" opacity="0.3"/>
+        <!-- Texte NÔTÉA -->
+        <text x="40" y="32" class="logo-text" fill="url(#goldGradient)">
+          NÔTÉA
+        </text>
+        <!-- Ligne décorative sous le texte -->
+        <line x1="42" y1="38" x2="165" y2="38" stroke="url(#goldGradient)" stroke-width="0.5" opacity="0.6"/>
+      </svg>
     </a>
 
     <!-- Right Menu -->
     <div class="nav-right">
-      <a class="nav-link" 
-         routerLink="/ListParfums" 
-         [class.active]="isActive('/ListParfums')">
-        Catalogue
-      </a>
+      <!-- Après connexion -->
       <a class="nav-link" 
          routerLink="/Favoris" 
          [class.active]="isActive('/Favoris')"
          *ngIf="isLoggedIn">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
         Favoris
       </a>
       <a class="nav-link" 
+         routerLink="/test-personnalite" 
+         [class.active]="isActive('/test-personnalite')"
+         *ngIf="isLoggedIn">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M20 21a8 8 0 0 0-16 0"/>
+        </svg>
+        Profil
+      </a>
+      <!-- Avant connexion -->
+      <a class="nav-link login-btn" 
          routerLink="/login" 
          *ngIf="!isLoggedIn">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
         Connexion
       </a>
+      <!-- Après connexion -->
       <button class="nav-link logout-btn" 
               (click)="logout()"
               *ngIf="isLoggedIn">
-        Quitter
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Déconnexion
       </button>
     </div>
 
@@ -59,22 +110,45 @@
   <!-- Mobile Menu -->
   <div class="mobile-menu" [class.active]="menuOpen">
     <a class="mobile-link" routerLink="/ListParfums" (click)="closeMenu()" [class.active]="isActive('/ListParfums')">
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
       Catalogue
     </a>
+    <a class="mobile-link" routerLink="/boutiques" (click)="closeMenu()" [class.active]="isActive('/boutiques')" *ngIf="isLoggedIn">
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+      </svg>
+      Boutiques
+    </a>
     <a class="mobile-link" routerLink="/Favoris" (click)="closeMenu()" [class.active]="isActive('/Favoris')" *ngIf="isLoggedIn">
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
       Favoris
     </a>
     <a class="mobile-link" routerLink="/test-personnalite" (click)="closeMenu()" [class.active]="isActive('/test-personnalite')" *ngIf="isLoggedIn">
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M20 21a8 8 0 0 0-16 0"/>
+      </svg>
       Profil
     </a>
-    <a class="mobile-link" routerLink="/boutiques" (click)="closeMenu()" [class.active]="isActive('/boutiques')" *ngIf="isLoggedIn">
-      Boutiques
-    </a>
-    <a class="mobile-link" routerLink="/login" (click)="closeMenu()" *ngIf="!isLoggedIn">
+    <a class="mobile-link login-btn" routerLink="/login" (click)="closeMenu()" *ngIf="!isLoggedIn">
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
       Connexion
     </a>
     <button class="mobile-link logout-btn" (click)="logout(); closeMenu()" *ngIf="isLoggedIn">
-      Quitter
+      <svg class="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Déconnexion
     </button>
   </div>
 </nav>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.services/auth.service';
@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   menuOpen = false;
+  isScrolled = false;
   private authSubscription?: Subscription;
 
   constructor(
@@ -28,6 +29,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.isLoggedIn = loggedIn;
       }
     );
+    
+    // Vérifier l'état du scroll initial
+    this.checkScroll();
   }
 
   ngOnDestroy() {
@@ -35,6 +39,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+  }
+
+  @HostListener('window:scroll')
+  checkScroll() {
+    this.isScrolled = window.scrollY > 50;
   }
 
   toggleMenu() {

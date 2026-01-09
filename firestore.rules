@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // UTILISATEURS - Document principal
+    // Structure évolutive pour profil + personnalité
+    // ============================================
+    match /users/{userId} {
+      // Lecture/écriture uniquement par le propriétaire
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // ============================================
+      // FAVORIS - Sous-collection
+      // Stocke toutes les infos produit pour affichage
+      // ============================================
+      match /favoris/{productId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // ============================================
+      // FUTURES SOUS-COLLECTIONS (préparées)
+      // Ex: historique, recommandations, etc.
+      // ============================================
+      match /{subcollection}/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Bloquer tout autre accès par défaut
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

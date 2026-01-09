@@ -1,4 +1,4 @@
-/* Footer Luxe Ambré - Nôtéa */
+/* Footer Luxe - Nôtéa */
 
 $gold: #d4a855;
 $gold-light: #f0d9a0;
@@ -18,18 +18,27 @@ $amber-dark: #1a0a04;
 }
 
 .footer-logo {
-  font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: 4px;
-  color: $gold;
+  display: flex;
+  justify-content: center;
   margin-bottom: 0.5rem;
+  
+  .logo-svg {
+    height: 38px;
+    width: auto;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba($gold, 0.3));
+    }
+  }
 }
 
 .footer-tagline {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 0.95rem;
-  font-style: italic;
+  font-weight: 400;
   color: rgba($gold-light, 0.5);
   letter-spacing: 1px;
 }
@@ -42,8 +51,9 @@ $amber-dark: #1a0a04;
 }
 
 .footer-copy {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
   font-size: 0.8rem;
+  font-weight: 400;
   color: rgba($cream, 0.4);
   letter-spacing: 1px;
 }
@@ -54,6 +64,8 @@ $amber-dark: #1a0a04;
   }
   
   .footer-logo {
-    font-size: 1.1rem;
+    .logo-svg {
+      height: 32px;
+    }
   }
 }

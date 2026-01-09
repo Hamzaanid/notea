@@ -1,6 +1,6 @@
-/* Global Styles - Nôtéa Luxe Ambré */
+/* Global Styles - Nôtéa Luxe */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant:wght@300;400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -26,7 +26,8 @@ html {
 }
 
 body {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
+  font-weight: 400;
   background: radial-gradient(ellipse at top center, #3d1a10 0%, #1a0a04 50%, #0d0502 100%);
   background-attachment: fixed;
   color: var(--cream);
@@ -42,11 +43,12 @@ body {
   padding: 0 1.5rem;
 }
 
-/* Typography */
+/* Typography - Plus luxueux sans italique excessif */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: 'Cinzel', 'Georgia', serif;
   font-weight: 500;
   line-height: 1.2;
+  letter-spacing: 1px;
 }
 
 /* Links */
@@ -62,7 +64,8 @@ a {
 
 /* Buttons */
 .btn {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Cormorant', 'Georgia', serif;
+  font-weight: 500;
   letter-spacing: 1px;
 }
 

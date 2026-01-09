@@ -1,4 +1,98 @@
-<!-- Favoris -->
 <div class="favoris">
-  
+  <!-- Toast Notification -->
+  <div 
+    class="toast-notification" 
+    [class.show]="showToast"
+    [class.success]="toastType === 'success'"
+    [class.error]="toastType === 'error'"
+    [class.info]="toastType === 'info'"
+    (click)="hideToast()">
+    <div class="toast-icon">
+      <span *ngIf="toastType === 'success'">✓</span>
+      <span *ngIf="toastType === 'error'">✕</span>
+      <span *ngIf="toastType === 'info'">ℹ</span>
+    </div>
+    <span class="toast-message">{{ toastMessage }}</span>
+  </div>
+
+  <!-- Header -->
+  <div class="favoris-header">
+    <h1 class="page-title">Mes Favoris</h1>
+    <p class="page-subtitle" *ngIf="isLoggedIn && favorites.length > 0">
+      {{ favorites.length }} parfum{{ favorites.length > 1 ? 's' : '' }} dans votre collection
+    </p>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loader"></div>
+    <p class="loading-text">Chargement de vos favoris...</p>
+  </div>
+
+  <!-- Non connecté -->
+  <div class="empty-state" *ngIf="!loading && !isLoggedIn">
+    <div class="empty-icon">🔐</div>
+    <h2>Connexion requise</h2>
+    <p>Connectez-vous pour accéder à vos favoris</p>
+    <a routerLink="/login" class="action-btn">Se connecter</a>
+  </div>
+
+  <!-- Aucun favori -->
+  <div class="empty-state" *ngIf="!loading && isLoggedIn && favorites.length === 0">
+    <div class="empty-icon">♡</div>
+    <h2>Aucun favori</h2>
+    <p>Explorez notre catalogue et ajoutez vos parfums préférés</p>
+    <a routerLink="/list-parfums" class="action-btn">Découvrir les parfums</a>
+  </div>
+
+  <!-- Grille de favoris -->
+  <div class="favorites-grid" *ngIf="!loading && isLoggedIn && favorites.length > 0">
+    <div class="favorite-card" *ngFor="let product of favorites" (click)="openProduct(product)">
+      <!-- Badges -->
+      <div class="product-badges">
+        <span class="badge new" *ngIf="product.isNew">Nouveau</span>
+        <span class="badge exclusive" *ngIf="product.isSephoraExclusive">Exclusif</span>
+        <span class="badge limited" *ngIf="product.isLimitedEdition">Édition Limitée</span>
+      </div>
+      
+      <!-- Bouton supprimer -->
+      <button 
+        class="remove-btn" 
+        (click)="removeFavorite($event, product)"
+        title="Retirer des favoris">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </button>
+      
+      <!-- Image -->
+      <div class="product-image">
+        <img [src]="product.heroImage" [alt]="product.displayName" loading="lazy">
+      </div>
+      
+      <!-- Info -->
+      <div class="product-info">
+        <p class="product-brand">{{ product.brandName }}</p>
+        <h3 class="product-name">{{ product.displayName }}</h3>
+        
+        <!-- Rating -->
+        <div class="product-rating" *ngIf="product.rating && product.rating !== '0'">
+          <div class="stars">
+            <span *ngFor="let star of getStars(product.rating)" 
+                  class="star" 
+                  [class.full]="star === 'full'"
+                  [class.half]="star === 'half'">★</span>
+          </div>
+          <span class="rating-text">{{ formatRating(product.rating) }}</span>
+          <span class="reviews-count" *ngIf="product.reviews">({{ product.reviews }})</span>
+        </div>
+        
+        <!-- Prix -->
+        <p class="product-price">{{ formatPrice(product.price) }}</p>
+        
+        <!-- Date d'ajout -->
+        <p class="added-date">Ajouté le {{ formatDate(product.addedAt) }}</p>
+      </div>
+    </div>
+  </div>
 </div>
