@@ -1,17 +1,12 @@
-/* Profile styles */
-.profile {
-  
+/* Profile Page - Nôtéa */
+
+.profile-page {
+  padding-top: 100px;
+  min-height: 100vh;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+@media (max-width: 768px) {
+  .profile-page {
+    padding-top: 80px;
+  }
+}

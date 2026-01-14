@@ -4,6 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.services/auth.service';
 
+/**
+ * Composant d'inscription
+ * Gère la création de nouveaux comptes utilisateur
+ */
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -28,14 +32,14 @@ export class RegisterComponent {
     });
   }
 
-  onSubmit() {
-    if (this.form.invalid) {
-      return;
-    }
+  /**
+   * Soumet le formulaire d'inscription
+   */
+  onSubmit(): void {
+    if (this.form.invalid) return;
 
     this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.clearMessages();
     
     const { email, password } = this.form.value;
 
@@ -51,22 +55,22 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading = false;
-        console.error(err);
-        
-        switch (err.code) {
-          case 'auth/email-already-in-use':
-            this.errorMessage = 'Un compte existe déjà avec cet email.';
-            break;
-          case 'auth/invalid-email':
-            this.errorMessage = 'Email invalide.';
-            break;
-          case 'auth/weak-password':
-            this.errorMessage = 'Mot de passe trop faible (min. 6 caractères).';
-            break;
-          default:
-            this.errorMessage = 'Erreur lors de la création du compte.';
-        }
+        this.errorMessage = this.getErrorMessage(err.code);
       }
     });
+  }
+
+  private clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  private getErrorMessage(code: string): string {
+    const messages: Record<string, string> = {
+      'auth/email-already-in-use': 'Un compte existe déjà avec cet email.',
+      'auth/invalid-email': 'Email invalide.',
+      'auth/weak-password': 'Mot de passe trop faible (min. 6 caractères).'
+    };
+    return messages[code] ?? 'Erreur lors de la création du compte.';
   }
 }

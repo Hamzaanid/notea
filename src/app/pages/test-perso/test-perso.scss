@@ -1,17 +1,12 @@
-/* Test personnalité styles */
-.test-perso {
-  
+/* Test Personnalité Page - Nôtéa */
+
+.test-page {
+  padding-top: 100px;
+  min-height: 100vh;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+@media (max-width: 768px) {
+  .test-page {
+    padding-top: 80px;
+  }
+}

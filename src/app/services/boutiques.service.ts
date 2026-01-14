@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, map, catchError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
+/**
+ * Interface représentant une boutique de parfumerie
+ */
 export interface Boutique {
   id: number;
   name: string;
@@ -14,26 +16,31 @@ export interface Boutique {
   phone?: string;
   website?: string;
   openingHours?: string;
+  distance?: number;
 }
 
+/**
+ * Service de gestion des boutiques de parfumerie
+ * Fournit une base de données locale des parfumeries en France
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class BoutiquesService {
   
-  // Base de données des parfumeries principales en France
-  private boutiques: Boutique[] = [
+  /** Base de données des parfumeries principales en France */
+  private readonly boutiques: Boutique[] = [
     // PARIS
     { id: 1, name: 'Sephora Champs-Élysées', brand: 'Sephora', address: '70 Avenue des Champs-Élysées', city: 'Paris', postalCode: '75008', lat: 48.8714, lon: 2.3056, phone: '01 53 93 22 50', website: 'www.sephora.fr', openingHours: 'Lun-Sam 10h-23h, Dim 11h-23h' },
     { id: 2, name: 'Sephora Opéra', brand: 'Sephora', address: '23 Boulevard des Capucines', city: 'Paris', postalCode: '75002', lat: 48.8706, lon: 2.3312, phone: '01 42 68 17 17', website: 'www.sephora.fr', openingHours: 'Lun-Sam 10h-20h' },
     { id: 3, name: 'Sephora Rivoli', brand: 'Sephora', address: '70 Rue de Rivoli', city: 'Paris', postalCode: '75004', lat: 48.8575, lon: 2.3514, phone: '01 40 13 16 50', website: 'www.sephora.fr' },
-    { id: 4, name: 'Nocibé Opéra', brand: 'Nocibé', address: '66 Rue de la Chaussée d\'Antin', city: 'Paris', postalCode: '75009', lat: 48.8751, lon: 2.3326, phone: '01 48 74 33 58', website: 'www.nocibe.fr', openingHours: 'Lun-Sam 10h-20h' },
+    { id: 4, name: 'Nocibé Opéra', brand: 'Nocibé', address: "66 Rue de la Chaussée d'Antin", city: 'Paris', postalCode: '75009', lat: 48.8751, lon: 2.3326, phone: '01 48 74 33 58', website: 'www.nocibe.fr', openingHours: 'Lun-Sam 10h-20h' },
     { id: 5, name: 'Nocibé Haussmann', brand: 'Nocibé', address: '52 Boulevard Haussmann', city: 'Paris', postalCode: '75009', lat: 48.8738, lon: 2.3299, website: 'www.nocibe.fr' },
     { id: 6, name: 'Marionnaud Champs-Élysées', brand: 'Marionnaud', address: '88 Avenue des Champs-Élysées', city: 'Paris', postalCode: '75008', lat: 48.8724, lon: 2.3028, phone: '01 45 62 42 40', website: 'www.marionnaud.fr' },
     { id: 7, name: 'Marionnaud Opéra', brand: 'Marionnaud', address: '17 Rue Tronchet', city: 'Paris', postalCode: '75008', lat: 48.8717, lon: 2.3245, website: 'www.marionnaud.fr' },
     { id: 8, name: 'Douglas Paris', brand: 'Douglas', address: '52 Avenue des Champs-Élysées', city: 'Paris', postalCode: '75008', lat: 48.8701, lon: 2.3075, website: 'www.douglas.fr' },
     { id: 9, name: 'Fragonard Opéra', brand: 'Fragonard', address: '9 Rue Scribe', city: 'Paris', postalCode: '75009', lat: 48.8711, lon: 2.3310, phone: '01 47 42 04 56', website: 'www.fragonard.com', openingHours: 'Lun-Sam 9h-18h' },
-    { id: 10, name: 'L\'Occitane Saint-Germain', brand: "L'Occitane", address: '55 Rue Bonaparte', city: 'Paris', postalCode: '75006', lat: 48.8535, lon: 2.3337, website: 'www.loccitane.com' },
+    { id: 10, name: "L'Occitane Saint-Germain", brand: "L'Occitane", address: '55 Rue Bonaparte', city: 'Paris', postalCode: '75006', lat: 48.8535, lon: 2.3337, website: 'www.loccitane.com' },
     
     // LYON
     { id: 11, name: 'Sephora Part-Dieu', brand: 'Sephora', address: 'Centre Commercial Part-Dieu', city: 'Lyon', postalCode: '69003', lat: 45.7607, lon: 4.8590, phone: '04 72 33 06 08', website: 'www.sephora.fr' },
@@ -47,13 +54,13 @@ export class BoutiquesService {
     { id: 17, name: 'Marionnaud Marseille', brand: 'Marionnaud', address: '50 Rue Saint-Ferréol', city: 'Marseille', postalCode: '13001', lat: 43.2945, lon: 5.3785, website: 'www.marionnaud.fr' },
     
     // BORDEAUX
-    { id: 18, name: 'Sephora Bordeaux', brand: 'Sephora', address: '15 Cours de l\'Intendance', city: 'Bordeaux', postalCode: '33000', lat: 44.8412, lon: -0.5750, website: 'www.sephora.fr' },
+    { id: 18, name: 'Sephora Bordeaux', brand: 'Sephora', address: "15 Cours de l'Intendance", city: 'Bordeaux', postalCode: '33000', lat: 44.8412, lon: -0.5750, website: 'www.sephora.fr' },
     { id: 19, name: 'Nocibé Bordeaux', brand: 'Nocibé', address: '72 Rue Sainte-Catherine', city: 'Bordeaux', postalCode: '33000', lat: 44.8380, lon: -0.5735, website: 'www.nocibe.fr' },
-    { id: 20, name: 'Marionnaud Bordeaux', brand: 'Marionnaud', address: '44 Cours de l\'Intendance', city: 'Bordeaux', postalCode: '33000', lat: 44.8420, lon: -0.5760, website: 'www.marionnaud.fr' },
+    { id: 20, name: 'Marionnaud Bordeaux', brand: 'Marionnaud', address: "44 Cours de l'Intendance", city: 'Bordeaux', postalCode: '33000', lat: 44.8420, lon: -0.5760, website: 'www.marionnaud.fr' },
     
     // TOULOUSE
-    { id: 21, name: 'Sephora Toulouse', brand: 'Sephora', address: '14 Rue d\'Alsace-Lorraine', city: 'Toulouse', postalCode: '31000', lat: 43.6045, lon: 1.4440, website: 'www.sephora.fr' },
-    { id: 22, name: 'Nocibé Toulouse', brand: 'Nocibé', address: '30 Rue d\'Alsace-Lorraine', city: 'Toulouse', postalCode: '31000', lat: 43.6050, lon: 1.4445, website: 'www.nocibe.fr' },
+    { id: 21, name: 'Sephora Toulouse', brand: 'Sephora', address: "14 Rue d'Alsace-Lorraine", city: 'Toulouse', postalCode: '31000', lat: 43.6045, lon: 1.4440, website: 'www.sephora.fr' },
+    { id: 22, name: 'Nocibé Toulouse', brand: 'Nocibé', address: "30 Rue d'Alsace-Lorraine", city: 'Toulouse', postalCode: '31000', lat: 43.6050, lon: 1.4445, website: 'www.nocibe.fr' },
     
     // NICE
     { id: 23, name: 'Sephora Nice', brand: 'Sephora', address: '8 Avenue Jean Médecin', city: 'Nice', postalCode: '06000', lat: 43.7010, lon: 7.2695, website: 'www.sephora.fr' },
@@ -77,10 +84,8 @@ export class BoutiquesService {
     
     // RENNES
     { id: 33, name: 'Sephora Rennes', brand: 'Sephora', address: '8 Quai Émile Zola', city: 'Rennes', postalCode: '35000', lat: 48.1105, lon: -1.6780, website: 'www.sephora.fr' },
-    { id: 34, name: 'Marionnaud Rennes', brand: 'Marionnaud', address: 'Centre Commercial Colombia', city: 'Rennes', postalCode: '35000', lat: 48.1180, lon: -1.6350, website: 'www.marionnaud.fr' },
+    { id: 34, name: 'Marionnaud Rennes', brand: 'Marionnaud', address: 'Centre Commercial Colombia', city: 'Rennes', postalCode: '35000', lat: 48.1180, lon: -1.6350, website: 'www.marionnaud.fr' }
   ];
-
-  constructor(private http: HttpClient) {}
 
   /**
    * Récupère toutes les boutiques
@@ -91,6 +96,7 @@ export class BoutiquesService {
 
   /**
    * Recherche les boutiques par ville
+   * @param city - Nom de la ville
    */
   getBoutiquesByCity(city: string): Observable<Boutique[]> {
     const cityLower = city.toLowerCase().trim();
@@ -102,6 +108,7 @@ export class BoutiquesService {
 
   /**
    * Recherche les boutiques par marque
+   * @param brand - Nom de la marque
    */
   getBoutiquesByBrand(brand: string): Observable<Boutique[]> {
     const filtered = this.boutiques.filter(b => 
@@ -111,9 +118,12 @@ export class BoutiquesService {
   }
 
   /**
-   * Recherche les boutiques à proximité (par distance)
+   * Recherche les boutiques à proximité d'une position GPS
+   * @param lat - Latitude
+   * @param lon - Longitude
+   * @param radiusKm - Rayon de recherche en km
    */
-  getBoutiquesNearby(lat: number, lon: number, radiusKm: number = 50): Observable<Boutique[]> {
+  getBoutiquesNearby(lat: number, lon: number, radiusKm = 50): Observable<Boutique[]> {
     const filtered = this.boutiques
       .map(b => ({
         ...b,
@@ -145,22 +155,16 @@ export class BoutiquesService {
   }
 
   /**
-   * Liste des villes disponibles
+   * Récupère la liste des villes disponibles
    */
   getAvailableCities(): string[] {
-    const cities = [...new Set(this.boutiques.map(b => b.city))];
-    return cities.sort();
+    return [...new Set(this.boutiques.map(b => b.city))].sort();
   }
 
   /**
-   * Liste des marques disponibles
+   * Récupère la liste des marques disponibles
    */
   getAvailableBrands(): string[] {
-    const brands = [...new Set(this.boutiques.map(b => b.brand))];
-    return brands.sort();
+    return [...new Set(this.boutiques.map(b => b.brand))].sort();
   }
 }
-
-
-
-

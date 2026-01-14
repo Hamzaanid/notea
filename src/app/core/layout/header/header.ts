@@ -4,6 +4,10 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.services/auth.service';
 import { Subscription } from 'rxjs';
 
+/**
+ * Composant Header - Navigation principale de l'application
+ * Gère l'affichage du menu, l'état de connexion et le comportement au scroll
+ */
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -15,53 +19,68 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   menuOpen = false;
   isScrolled = false;
+  
   private authSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
-    private router: Router,
+    private router: Router
   ) {}
 
-  ngOnInit() {
-    // S'abonner aux changements d'état de connexion
-    this.authSubscription = this.authService.isLoggedIn$.subscribe(
-      (loggedIn) => {
-        this.isLoggedIn = loggedIn;
-      }
-    );
-    
-    // Vérifier l'état du scroll initial
+  ngOnInit(): void {
+    this.subscribeToAuth();
     this.checkScroll();
   }
 
-  ngOnDestroy() {
-    // Se désabonner pour éviter les fuites mémoire
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 
+  /**
+   * S'abonne aux changements d'état de connexion
+   */
+  private subscribeToAuth(): void {
+    this.authSubscription = this.authService.isLoggedIn$.subscribe(
+      (loggedIn) => this.isLoggedIn = loggedIn
+    );
+  }
+
+  /**
+   * Vérifie la position du scroll pour modifier l'apparence du header
+   */
   @HostListener('window:scroll')
-  checkScroll() {
+  checkScroll(): void {
     this.isScrolled = window.scrollY > 50;
   }
 
-  toggleMenu() {
+  /**
+   * Ouvre/ferme le menu mobile
+   */
+  toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
-  closeMenu() {
+  /**
+   * Ferme le menu mobile
+   */
+  closeMenu(): void {
     this.menuOpen = false;
   }
 
-  isActive(route: string): boolean {
-    return this.router.url === route || this.router.url.startsWith(route + '/');
-  }
-
-  logout() {
+  /**
+   * Déconnecte l'utilisateur
+   */
+  logout(): void {
     this.authService.logout().subscribe(() => {
       this.closeMenu();
       this.router.navigate(['/home']);
     });
+  }
+
+  /**
+   * Vérifie si une route est active
+   */
+  isActive(route: string): boolean {
+    return this.router.url === route;
   }
 }

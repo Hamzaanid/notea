@@ -1,60 +1,78 @@
-<div class="auth-container">
-  <div class="auth-card">
+<!-- Page Inscription - Nôtéa -->
+<div class="auth-page min-vh-100 d-flex align-items-center justify-content-center py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+        
+        <div class="auth-card card bg-transparent-dark border-gold-subtle p-4 p-md-5">
+          
+          <!-- Header -->
+          <div class="text-center mb-4">
+            <h2 class="h3 font-heading text-gold-light mb-2" style="letter-spacing: 2px;">
+              Créer un compte
+            </h2>
+            <p class="text-muted-custom mb-0">Rejoignez l'univers Nôtéa</p>
+          </div>
 
-    <h2 class="auth-title">Créer un compte</h2>
-    <p class="auth-subtitle">Rejoignez l'univers Nôtéa</p>
+          <!-- Form -->
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email"
+                     formControlName="email"
+                     class="form-control"
+                     placeholder="votre@email.com"
+                     [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+              <div class="invalid-feedback" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+                Email invalide
+              </div>
+            </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <!-- Password -->
+            <div class="mb-4">
+              <label class="form-label">Mot de passe</label>
+              <input type="password"
+                     formControlName="password"
+                     class="form-control"
+                     placeholder="Min. 6 caractères"
+                     [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
+              <div class="invalid-feedback" *ngIf="form.get('password')?.errors?.['minlength'] && form.get('password')?.touched">
+                Minimum 6 caractères requis
+              </div>
+            </div>
 
-      <!-- Email -->
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email"
-               formControlName="email"
-               class="form-input"
-               placeholder="votre@email.com"
-               [class.error]="form.get('email')?.invalid && form.get('email')?.touched">
-        <span class="form-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-          Email invalide
-        </span>
+            <!-- Submit Button -->
+            <button type="submit"
+                    class="btn btn-primary w-100 py-3"
+                    [disabled]="form.invalid || loading">
+              <span *ngIf="!loading">S'inscrire</span>
+              <span *ngIf="loading" class="d-flex align-items-center justify-content-center gap-2">
+                <span class="spinner-border spinner-border-sm"></span>
+                Création...
+              </span>
+            </button>
+          </form>
+
+          <!-- Success Message -->
+          <div class="alert alert-success mt-4 text-center" *ngIf="successMessage">
+            {{ successMessage }}
+          </div>
+
+          <!-- Error Message -->
+          <div class="alert alert-danger mt-4 text-center" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <!-- Login Link -->
+          <p class="text-center text-muted-custom mt-4 mb-0">
+            Déjà un compte ?
+            <a routerLink="/login" class="text-gold fw-medium">Se connecter</a>
+          </p>
+
+        </div>
       </div>
-
-      <!-- Password -->
-      <div class="form-group">
-        <label class="form-label">Mot de passe</label>
-        <input type="password"
-               formControlName="password"
-               class="form-input"
-               placeholder="Min. 6 caractères"
-               [class.error]="form.get('password')?.invalid && form.get('password')?.touched">
-        <span class="form-error" *ngIf="form.get('password')?.errors?.['minlength'] && form.get('password')?.touched">
-          Minimum 6 caractères requis
-        </span>
-      </div>
-
-      <button type="submit"
-              class="auth-btn"
-              [disabled]="form.invalid || loading">
-        <span *ngIf="!loading">S'inscrire</span>
-        <span *ngIf="loading" class="loading-text">Création...</span>
-      </button>
-    </form>
-
-    <!-- Success -->
-    <div class="auth-success" *ngIf="successMessage">
-      {{ successMessage }}
     </div>
-
-    <!-- Error -->
-    <div class="auth-error" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <!-- Login redirect -->
-    <p class="auth-footer">
-      Déjà un compte ?
-      <a routerLink="/login" class="auth-link">Se connecter</a>
-    </p>
-
   </div>
 </div>

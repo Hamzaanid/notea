@@ -1,10 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FavoritesService, FavoriteProduct } from '../../services/favorites.service';
-import { AuthService } from '../../core/auth/services/auth.services/auth.service';
 import { Subscription } from 'rxjs';
 
+import { FavoritesService, FavoriteProduct } from '../../services/favorites.service';
+import { AuthService } from '../../core/auth/services/auth.services/auth.service';
+
+/**
+ * Composant page des favoris
+ * Affiche la liste des parfums sauvegardés par l'utilisateur
+ */
 @Component({
   selector: 'app-favoris',
   standalone: true,
@@ -17,31 +22,39 @@ export class Favoris implements OnInit, OnDestroy {
   isLoggedIn = false;
   loading = true;
   
-  private subscriptions: Subscription[] = [];
-
-  // Toast notification
+  // Toast
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'success';
   showToast = false;
-  private toastTimeout: any;
+  
+  private subscriptions: Subscription[] = [];
+  private toastTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private favoritesService: FavoritesService,
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    // S'abonner à l'état de connexion
+  ngOnInit(): void {
+    this.subscribeToAuth();
+    this.subscribeToFavorites();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    if (this.toastTimeout) clearTimeout(this.toastTimeout);
+  }
+
+  private subscribeToAuth(): void {
     this.subscriptions.push(
       this.authService.isLoggedIn$.subscribe(isLogged => {
         this.isLoggedIn = isLogged;
-        if (!isLogged) {
-          this.loading = false;
-        }
+        if (!isLogged) this.loading = false;
       })
     );
+  }
 
-    // S'abonner aux favoris complets
+  private subscribeToFavorites(): void {
     this.subscriptions.push(
       this.favoritesService.favorites$.subscribe(favs => {
         this.favorites = favs;
@@ -50,74 +63,45 @@ export class Favoris implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    if (this.toastTimeout) {
-      clearTimeout(this.toastTimeout);
-    }
-  }
-
   /**
    * Ouvre le produit sur Sephora
    */
-  openProduct(product: FavoriteProduct) {
-    const url = `https://www.sephora.com${product.targetUrl}`;
-    window.open(url, '_blank');
+  openProduct(product: FavoriteProduct): void {
+    window.open(`https://www.sephora.com${product.targetUrl}`, '_blank');
   }
 
   /**
    * Retire un produit des favoris
    */
-  async removeFavorite(event: Event, product: FavoriteProduct) {
+  async removeFavorite(event: Event, product: FavoriteProduct): Promise<void> {
     event.stopPropagation();
     
     try {
       await this.favoritesService.removeFromFavorites(product.productId);
       this.displayToast(`${product.brandName} retiré des favoris`, 'info');
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
       this.displayToast('Erreur lors de la suppression', 'error');
     }
   }
 
-  /**
-   * Formate le prix
-   */
   formatPrice(price: string): string {
     return price || 'Prix non disponible';
   }
 
-  /**
-   * Formate le rating
-   */
   formatRating(rating: string): string {
     const num = parseFloat(rating);
     return isNaN(num) ? '0.0' : num.toFixed(1);
   }
 
-  /**
-   * Génère les étoiles pour le rating
-   */
   getStars(rating: string): string[] {
     const num = parseFloat(rating) || 0;
-    const stars: string[] = [];
-    
-    for (let i = 1; i <= 5; i++) {
-      if (i <= Math.floor(num)) {
-        stars.push('full');
-      } else if (i - 0.5 <= num) {
-        stars.push('half');
-      } else {
-        stars.push('empty');
-      }
-    }
-    
-    return stars;
+    return [1, 2, 3, 4, 5].map(i => {
+      if (i <= Math.floor(num)) return 'full';
+      if (i - 0.5 <= num) return 'half';
+      return 'empty';
+    });
   }
 
-  /**
-   * Formate la date d'ajout
-   */
   formatDate(date: Date): string {
     return new Intl.DateTimeFormat('fr-FR', {
       day: 'numeric',
@@ -126,23 +110,17 @@ export class Favoris implements OnInit, OnDestroy {
     }).format(date);
   }
 
-  // ========== TOAST NOTIFICATION ==========
-
-  displayToast(message: string, type: 'success' | 'error' | 'info' = 'success') {
-    if (this.toastTimeout) {
-      clearTimeout(this.toastTimeout);
-    }
+  displayToast(message: string, type: 'success' | 'error' | 'info' = 'success'): void {
+    if (this.toastTimeout) clearTimeout(this.toastTimeout);
     
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
     
-    this.toastTimeout = setTimeout(() => {
-      this.hideToast();
-    }, 3000);
+    this.toastTimeout = setTimeout(() => this.hideToast(), 3000);
   }
 
-  hideToast() {
+  hideToast(): void {
     this.showToast = false;
   }
 }

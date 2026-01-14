@@ -1,11 +1,10 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone, OnDestroy } from '@angular/core';
 import { 
   Firestore, 
   doc, 
   setDoc, 
   deleteDoc, 
   collection, 
-  getDocs,
   collectionData,
   query,
   orderBy
@@ -14,15 +13,11 @@ import { Auth, authState, User } from '@angular/fire/auth';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 /**
- * Interface complète pour un favori stocké en base
- * Contient toutes les infos nécessaires pour l'affichage
+ * Interface représentant un produit favori stocké en base
  */
 export interface FavoriteProduct {
-  // Identifiants
   productId: string;
   skuId: string;
-  
-  // Infos produit pour l'affichage
   brandName: string;
   displayName: string;
   heroImage: string;
@@ -31,62 +26,64 @@ export interface FavoriteProduct {
   reviews: string;
   price: string;
   targetUrl: string;
-  
-  // Badges
   isNew: boolean;
   isLimitedEdition: boolean;
   isSephoraExclusive: boolean;
-  
-  // Métadonnées
   addedAt: Date;
 }
 
 /**
- * Interface pour le document utilisateur (structure évolutive)
- * Préparé pour les futures fonctionnalités (profil, personnalité, etc.)
+ * Données nécessaires pour ajouter un produit aux favoris
  */
-export interface UserDocument {
-  // Infos de base
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  
-  // Futures fonctionnalités (personnalité pour recommandations)
-  // personality?: {
-  //   scentFamily?: string;
-  //   intensity?: string;
-  //   occasions?: string[];
-  //   seasons?: string[];
-  //   quizAnswers?: Record<string, string>;
-  // };
+export interface FavoriteProductData {
+  productId: string;
+  skuId: string;
+  brandName: string;
+  displayName: string;
+  heroImage: string;
+  altImage?: string;
+  rating: string;
+  reviews: string;
+  price: string;
+  targetUrl: string;
+  isNew?: boolean;
+  isLimitedEdition?: boolean;
+  isSephoraExclusive?: boolean;
 }
 
+/**
+ * Service de gestion des favoris utilisateur
+ * Synchronisé avec Firebase Firestore
+ */
 @Injectable({
   providedIn: 'root'
 })
-export class FavoritesService {
+export class FavoritesService implements OnDestroy {
+  private readonly firestore = inject(Firestore);
+  private readonly auth = inject(Auth);
+  private readonly ngZone = inject(NgZone);
   
-  private firestore = inject(Firestore);
-  private auth = inject(Auth);
-  private ngZone = inject(NgZone);
+  private readonly favoritesIdsSubject = new BehaviorSubject<string[]>([]);
+  private readonly favoritesSubject = new BehaviorSubject<FavoriteProduct[]>([]);
   
-  // Liste des IDs de favoris (pour vérification rapide)
-  private favoritesIdsSubject = new BehaviorSubject<string[]>([]);
-  public favoritesIds$ = this.favoritesIdsSubject.asObservable();
+  /** Observable des IDs de favoris (pour vérification rapide) */
+  readonly favoritesIds$ = this.favoritesIdsSubject.asObservable();
   
-  // Liste complète des favoris avec toutes les infos
-  private favoritesSubject = new BehaviorSubject<FavoriteProduct[]>([]);
-  public favorites$ = this.favoritesSubject.asObservable();
+  /** Observable des favoris complets */
+  readonly favorites$ = this.favoritesSubject.asObservable();
   
   private authSubscription: Subscription | null = null;
   private favoritesSubscription: Subscription | null = null;
   private currentUserId: string | null = null;
 
   constructor() {
-    // Écouter les changements d'authentification
+    this.initializeAuthListener();
+  }
+
+  /**
+   * Initialise l'écoute des changements d'authentification
+   */
+  private initializeAuthListener(): void {
     this.authSubscription = authState(this.auth).subscribe((user: User | null) => {
       this.ngZone.run(() => {
         if (user) {
@@ -104,9 +101,9 @@ export class FavoritesService {
 
   /**
    * Charge les favoris de l'utilisateur en temps réel
-   * Triés par date d'ajout (plus récent en premier)
+   * @param userId - ID de l'utilisateur
    */
-  private loadFavorites(userId: string) {
+  private loadFavorites(userId: string): void {
     this.cleanupFavoritesSubscription();
     
     const favoritesRef = collection(this.firestore, 'users', userId, 'favoris');
@@ -115,11 +112,9 @@ export class FavoritesService {
     this.favoritesSubscription = collectionData(favoritesQuery, { idField: 'id' })
       .subscribe((docs: any[]) => {
         this.ngZone.run(() => {
-          // Liste des IDs
           const ids = docs.map(doc => doc.productId);
           this.favoritesIdsSubject.next(ids);
           
-          // Liste complète avec toutes les infos
           const favorites: FavoriteProduct[] = docs.map(doc => ({
             productId: doc.productId,
             skuId: doc.skuId,
@@ -142,7 +137,7 @@ export class FavoritesService {
       });
   }
   
-  private cleanupFavoritesSubscription() {
+  private cleanupFavoritesSubscription(): void {
     if (this.favoritesSubscription) {
       this.favoritesSubscription.unsubscribe();
       this.favoritesSubscription = null;
@@ -150,23 +145,10 @@ export class FavoritesService {
   }
 
   /**
-   * Ajouter un produit aux favoris avec TOUTES ses infos
+   * Ajoute un produit aux favoris
+   * @param product - Données du produit à ajouter
    */
-  async addToFavorites(product: {
-    productId: string;
-    skuId: string;
-    brandName: string;
-    displayName: string;
-    heroImage: string;
-    altImage?: string;
-    rating: string;
-    reviews: string;
-    price: string;
-    targetUrl: string;
-    isNew?: boolean;
-    isLimitedEdition?: boolean;
-    isSephoraExclusive?: boolean;
-  }): Promise<void> {
+  async addToFavorites(product: FavoriteProductData): Promise<void> {
     if (!this.currentUserId) {
       throw new Error('Utilisateur non connecté');
     }
@@ -192,7 +174,8 @@ export class FavoritesService {
   }
 
   /**
-   * Retirer un produit des favoris
+   * Retire un produit des favoris
+   * @param productId - ID du produit à retirer
    */
   async removeFromFavorites(productId: string): Promise<void> {
     if (!this.currentUserId) {
@@ -204,27 +187,12 @@ export class FavoritesService {
   }
 
   /**
-   * Toggle favori (ajouter/retirer)
-   * Retourne true si ajouté, false si retiré
+   * Ajoute ou retire un produit des favoris
+   * @param product - Données du produit
+   * @returns true si ajouté, false si retiré
    */
-  async toggleFavorite(product: {
-    productId: string;
-    skuId: string;
-    brandName: string;
-    displayName: string;
-    heroImage: string;
-    altImage?: string;
-    rating: string;
-    reviews: string;
-    price: string;
-    targetUrl: string;
-    isNew?: boolean;
-    isLimitedEdition?: boolean;
-    isSephoraExclusive?: boolean;
-  }): Promise<boolean> {
-    const isFav = this.isFavorite(product.productId);
-    
-    if (isFav) {
+  async toggleFavorite(product: FavoriteProductData): Promise<boolean> {
+    if (this.isFavorite(product.productId)) {
       await this.removeFromFavorites(product.productId);
       return false;
     } else {
@@ -235,6 +203,7 @@ export class FavoritesService {
 
   /**
    * Vérifie si un produit est en favori
+   * @param productId - ID du produit
    */
   isFavorite(productId: string): boolean {
     return this.favoritesIdsSubject.value.includes(productId);
@@ -261,13 +230,8 @@ export class FavoritesService {
     return this.favoritesSubject.value.length;
   }
   
-  /**
-   * Cleanup lors de la destruction du service
-   */
-  ngOnDestroy() {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
     this.cleanupFavoritesSubscription();
   }
 }

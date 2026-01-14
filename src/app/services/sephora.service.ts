@@ -3,9 +3,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+/**
+ * Interface représentant un produit Sephora
+ */
 export interface SephoraProduct {
   productId: string;
-  skuId?: string;        // SKU ID (ex: "P518158")
+  skuId?: string;
   brandName: string;
   displayName: string;
   heroImage: string;
@@ -14,7 +17,7 @@ export interface SephoraProduct {
   reviews: string;
   targetUrl: string;
   currentSku: {
-    skuId?: string;      // SKU ID dans currentSku
+    skuId?: string;
     listPrice: string;
     isNew: boolean;
     isLimitedEdition: boolean;
@@ -22,23 +25,30 @@ export interface SephoraProduct {
   };
 }
 
+/**
+ * Interface pour les catégories de filtres
+ */
 export interface FilterCategory {
   categoryId: string;
   displayName: string;
   count: number;
 }
 
+/**
+ * Service de communication avec l'API Sephora
+ * Gère la récupération et la recherche de produits
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class SephoraService {
-  private baseUrl = environment.sephora.baseUrl;
-  private headers = new HttpHeaders({
+  private readonly baseUrl = environment.sephora.baseUrl;
+  private readonly headers = new HttpHeaders({
     'x-rapidapi-key': environment.sephora.apiKey,
     'x-rapidapi-host': environment.sephora.apiHost
   });
 
-  // Catégories pour les filtres
+  /** Catégories disponibles pour le filtrage */
   readonly categories: FilterCategory[] = [
     { categoryId: 'cat160006', displayName: 'Tous', count: 1733 },
     { categoryId: 'cat1230039', displayName: 'Femme', count: 1289 },
@@ -52,9 +62,12 @@ export class SephoraService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Récupère la liste des parfums
+   * Récupère la liste des parfums par catégorie
+   * @param categoryId - ID de la catégorie
+   * @param page - Numéro de page
+   * @param pageSize - Nombre de produits par page
    */
-  getProducts(categoryId: string = 'cat160006', page: number = 1, pageSize: number = 24): Observable<any> {
+  getProducts(categoryId = 'cat160006', page = 1, pageSize = 24): Observable<any> {
     const url = `${this.baseUrl}/us/products/v2/list`;
     const params = {
       categoryId,
@@ -71,9 +84,12 @@ export class SephoraService {
   }
 
   /**
-   * Recherche de produits
+   * Recherche de produits par mot-clé
+   * @param query - Terme de recherche
+   * @param page - Numéro de page
+   * @param pageSize - Nombre de produits par page
    */
-  searchProducts(query: string, page: number = 1, pageSize: number = 24): Observable<any> {
+  searchProducts(query: string, page = 1, pageSize = 24): Observable<any> {
     const url = `${this.baseUrl}/us/products/v2/search`;
     const params = {
       q: query,
@@ -90,10 +106,11 @@ export class SephoraService {
   }
 
   /**
-   * Retourne le nombre total pour une catégorie
+   * Retourne le nombre total de produits pour une catégorie
+   * @param categoryId - ID de la catégorie
    */
   getTotalForCategory(categoryId: string): number {
-    const cat = this.categories.find(c => c.categoryId === categoryId);
-    return cat ? cat.count : 0;
+    const category = this.categories.find(c => c.categoryId === categoryId);
+    return category?.count ?? 0;
   }
 }

@@ -1,12 +1,13 @@
-<div class="catalogue">
+<!-- Catalogue de Parfums - Nôtéa -->
+<div class="catalogue-page py-5">
+  
   <!-- Toast Notification -->
-  <div 
-    class="toast-notification" 
-    [class.show]="showToast"
-    [class.success]="toastType === 'success'"
-    [class.error]="toastType === 'error'"
-    [class.info]="toastType === 'info'"
-    (click)="hideToast()">
+  <div class="toast-notification" 
+       [class.show]="showToast"
+       [class.success]="toastType === 'success'"
+       [class.error]="toastType === 'error'"
+       [class.info]="toastType === 'info'"
+       (click)="hideToast()">
     <div class="toast-icon">
       <span *ngIf="toastType === 'success'">✓</span>
       <span *ngIf="toastType === 'error'">✕</span>
@@ -15,135 +16,140 @@
     <span class="toast-message">{{ toastMessage }}</span>
   </div>
 
-  <!-- Header -->
-  <div class="catalogue-header">
-    <h1 class="page-title">Catalogue</h1>
-    <p class="page-subtitle">Découvrez notre collection de parfums d'exception</p>
-  </div>
-
-  <!-- Filtres -->
-  <div class="filters-section">
-    <!-- Recherche -->
-    <div class="search-box">
-      <input 
-        type="text" 
-        class="search-input"
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()"
-        placeholder="Rechercher un parfum ou une marque...">
-      <button class="search-btn" (click)="onSearch()" [disabled]="loading">
-        <span class="search-icon">🔍</span>
-      </button>
-      <button class="clear-btn" *ngIf="searchQuery" (click)="clearSearch()">✕</button>
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="text-center mb-5">
+      <h1 class="h2 font-heading text-gold-light mb-2" style="letter-spacing: 2px;">Catalogue</h1>
+      <p class="text-muted-custom">Découvrez notre collection de parfums d'exception</p>
     </div>
 
-    <!-- Catégories -->
-    <div class="category-filters">
-      <button 
-        *ngFor="let cat of categories"
-        class="category-btn"
-        [class.active]="selectedCategory === cat.categoryId"
-        (click)="selectedCategory = cat.categoryId; onCategoryChange()">
-        {{ cat.displayName }}
-      </button>
-    </div>
-  </div>
-
-  <!-- Résultats -->
-  <div class="results-info" *ngIf="!loading && products.length > 0">
-    <span *ngIf="searchQuery">Résultats pour "{{ searchQuery }}"</span>
-    <span>{{ totalProducts }} parfums</span>
-  </div>
-
-  <!-- Loading -->
-  <div class="loading-container" *ngIf="loading">
-    <div class="loader"></div>
-    <p class="loading-text">Chargement des parfums...</p>
-  </div>
-
-  <!-- Erreur -->
-  <div class="error-container" *ngIf="error && !loading">
-    <p class="error-text">{{ error }}</p>
-    <button class="retry-btn" (click)="loadProducts()">Réessayer</button>
-  </div>
-
-  <!-- État vide -->
-  <div class="empty-state" *ngIf="!loading && !error && products.length === 0">
-    <p>Aucun parfum trouvé</p>
-    <button class="retry-btn" (click)="clearSearch()">Voir tous les parfums</button>
-  </div>
-
-  <!-- Grille de produits -->
-  <div class="products-grid" *ngIf="!loading && products.length > 0">
-    <div class="product-card" *ngFor="let product of products" (click)="openProduct(product)">
-      <!-- Badge -->
-      <div class="product-badges">
-        <span class="badge new" *ngIf="product.currentSku.isNew">Nouveau</span>
-        <span class="badge exclusive" *ngIf="product.currentSku.isSephoraExclusive">Exclusif</span>
-        <span class="badge limited" *ngIf="product.currentSku.isLimitedEdition">Édition Limitée</span>
-      </div>
+    <!-- Filters Section -->
+    <div class="mb-4">
       
-      <!-- Bouton Favori -->
-      <button 
-        class="favorite-btn" 
-        [class.active]="isFavorite(product.productId)"
-        (click)="toggleFavorite($event, product)"
-        [title]="isFavorite(product.productId) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-        </svg>
-      </button>
-      
-      <!-- Image -->
-      <div class="product-image">
-        <img [src]="product.heroImage" [alt]="product.displayName" loading="lazy">
-      </div>
-      
-      <!-- Info -->
-      <div class="product-info">
-        <p class="product-brand">{{ product.brandName }}</p>
-        <h3 class="product-name">{{ product.displayName }}</h3>
-        
-        <!-- Rating -->
-        <div class="product-rating" *ngIf="product.rating">
-          <div class="stars">
-            <span *ngFor="let star of getStars(product.rating)" 
-                  class="star" 
-                  [class.full]="star === 'full'"
-                  [class.half]="star === 'half'">★</span>
+      <!-- Search Box -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="input-group">
+            <input type="text" 
+                   class="form-control"
+                   [(ngModel)]="searchQuery"
+                   (keyup.enter)="onSearch()"
+                   placeholder="Rechercher un parfum ou une marque...">
+            <button class="btn btn-outline-primary" (click)="onSearch()" [disabled]="loading">
+              🔍
+            </button>
+            <button class="btn btn-outline-secondary" *ngIf="searchQuery" (click)="clearSearch()">
+              ✕
+            </button>
           </div>
-          <span class="rating-text">{{ formatRating(product.rating) }}</span>
-          <span class="reviews-count">({{ product.reviews }})</span>
         </div>
-        
-        <!-- Prix -->
-        <p class="product-price">{{ formatPrice(product.currentSku.listPrice) }}</p>
+      </div>
+
+      <!-- Category Filters -->
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <button *ngFor="let cat of categories"
+                class="btn btn-sm"
+                [class.btn-outline-primary]="selectedCategory !== cat.categoryId"
+                [class.active-filter]="selectedCategory === cat.categoryId"
+                (click)="selectedCategory = cat.categoryId; onCategoryChange()">
+          {{ cat.displayName }}
+        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Pagination -->
-  <div class="pagination" *ngIf="!loading && totalPages > 1">
-    <button 
-      class="page-btn nav-btn" 
-      (click)="prevPage()" 
-      [disabled]="currentPage === 1">
-      ‹
-    </button>
-    
-    <button 
-      *ngFor="let page of getPageNumbers()"
-      class="page-btn"
-      [class.active]="page === currentPage"
-      (click)="goToPage(page)">
-      {{ page }}
-    </button>
-    
-    <button 
-      class="page-btn nav-btn" 
-      (click)="nextPage()" 
-      [disabled]="currentPage === totalPages">
-      ›
-    </button>
+    <!-- Results Info -->
+    <div class="d-flex justify-content-between align-items-center mb-4 text-muted-custom small" 
+         *ngIf="!loading && products.length > 0">
+      <span *ngIf="searchQuery">Résultats pour "{{ searchQuery }}"</span>
+      <span>{{ totalProducts }} parfums</span>
+    </div>
+
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="loading">
+      <div class="loading-spinner mx-auto mb-3"></div>
+      <p class="text-muted-custom">Chargement des parfums...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="text-center py-5" *ngIf="error && !loading">
+      <p class="text-danger mb-3">{{ error }}</p>
+      <button class="btn btn-outline-primary" (click)="loadProducts()">Réessayer</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center py-5" *ngIf="!loading && !error && products.length === 0">
+      <p class="text-muted-custom mb-3">Aucun parfum trouvé</p>
+      <button class="btn btn-outline-primary" (click)="clearSearch()">Voir tous les parfums</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row g-4" *ngIf="!loading && products.length > 0">
+      <div class="col-6 col-md-4 col-lg-3" *ngFor="let product of products">
+        <div class="card product-card h-100" (click)="openProduct(product)">
+          
+          <!-- Badges -->
+          <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1" style="z-index: 2;">
+            <span class="badge bg-gold" *ngIf="product.currentSku.isNew">Nouveau</span>
+            <span class="badge bg-amber" *ngIf="product.currentSku.isSephoraExclusive">Exclusif</span>
+            <span class="badge" style="background: rgba(180, 80, 100, 0.9); color: #faf3e8;" 
+                  *ngIf="product.currentSku.isLimitedEdition">Édition Limitée</span>
+          </div>
+          
+          <!-- Favorite Button -->
+          <button class="favorite-btn" 
+                  [class.active]="isFavorite(product.productId)"
+                  (click)="toggleFavorite($event, product)"
+                  [title]="isFavorite(product.productId) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
+          
+          <!-- Image -->
+          <div class="product-image">
+            <img [src]="product.heroImage" [alt]="product.displayName" loading="lazy" class="card-img-top">
+          </div>
+          
+          <!-- Info -->
+          <div class="card-body">
+            <p class="product-brand mb-1">{{ product.brandName }}</p>
+            <h5 class="product-name card-title">{{ product.displayName }}</h5>
+            
+            <!-- Rating -->
+            <div class="d-flex align-items-center gap-2 mb-2" *ngIf="product.rating">
+              <div class="stars">
+                <span *ngFor="let star of getStars(product.rating)" 
+                      class="star" 
+                      [class.full]="star === 'full'"
+                      [class.half]="star === 'half'">★</span>
+              </div>
+              <span class="text-gold-light small fw-semibold">{{ formatRating(product.rating) }}</span>
+              <span class="text-muted-custom small">({{ product.reviews }})</span>
+            </div>
+            
+            <!-- Price -->
+            <p class="product-price mb-0">{{ formatPrice(product.currentSku.listPrice) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-5" *ngIf="!loading && totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="prevPage()">‹</button>
+        </li>
+        <li class="page-item" *ngFor="let page of getPageNumbers()" 
+            [class.active]="page === currentPage">
+          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="nextPage()">›</button>
+        </li>
+      </ul>
+    </nav>
+
   </div>
 </div>

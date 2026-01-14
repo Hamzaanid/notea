@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
+/**
+ * Interface représentant une carte de parfum basique
+ */
 export interface PerfumeCard {
   id: string;
   brand: string;
@@ -9,11 +11,17 @@ export interface PerfumeCard {
   image: string;
 }
 
+/**
+ * Service de gestion des parfums (implémentation locale)
+ * Note: Service de base, l'API Sephora est utilisée pour les données réelles
+ */
 @Injectable({ providedIn: 'root' })
 export class ParfumService {
-  constructor(private http: HttpClient) {}
-
-  // TODO: Implémenter la récupération des parfums
+  
+  /**
+   * Récupère la liste des parfums
+   * @returns Observable d'un tableau de parfums
+   */
   getPerfumes(): Observable<PerfumeCard[]> {
     return of([]);
   }

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Composant Footer - Pied de page de l'application
+ */
 @Component({
   selector: 'app-footer',
   standalone: true,
@@ -9,5 +12,5 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./footer.scss'],
 })
 export class FooterComponent {
-  currentYear = new Date().getFullYear();
+  readonly currentYear = new Date().getFullYear();
 }

@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BoutiquesService, Boutique } from '../../services/boutiques.service';
 
+/**
+ * Composant page des boutiques
+ * Permet de rechercher des parfumeries par ville, marque ou géolocalisation
+ */
 @Component({
   selector: 'app-boutiques',
   standalone: true,
@@ -16,7 +20,7 @@ export class Boutiques implements OnInit {
   loading = false;
   error = '';
   
-  // Recherche
+  // Filtres
   selectedCity = '';
   selectedBrand = '';
   
@@ -31,15 +35,12 @@ export class Boutiques implements OnInit {
 
   constructor(private boutiquesService: BoutiquesService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadFilters();
     this.loadAllBoutiques();
   }
 
-  /**
-   * Charge les listes de villes et marques
-   */
-  loadFilters() {
+  private loadFilters(): void {
     this.cities = this.boutiquesService.getAvailableCities();
     this.brands = this.boutiquesService.getAvailableBrands();
   }
@@ -47,7 +48,7 @@ export class Boutiques implements OnInit {
   /**
    * Charge toutes les boutiques
    */
-  loadAllBoutiques() {
+  loadAllBoutiques(): void {
     this.loading = true;
     this.error = '';
     this.searchMode = 'city';
@@ -68,9 +69,9 @@ export class Boutiques implements OnInit {
   /**
    * Recherche par géolocalisation
    */
-  searchNearby() {
+  searchNearby(): void {
     if (!navigator.geolocation) {
-      this.error = 'La géolocalisation n\'est pas supportée';
+      this.error = "La géolocalisation n'est pas supportée";
       return;
     }
 
@@ -92,7 +93,7 @@ export class Boutiques implements OnInit {
         this.boutiquesService.getBoutiquesNearby(
           this.userLocation.lat,
           this.userLocation.lon,
-          100 // 100km de rayon
+          100
         ).subscribe({
           next: (data) => {
             this.boutiques = data;
@@ -111,24 +112,26 @@ export class Boutiques implements OnInit {
       },
       (error) => {
         this.locationLoading = false;
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            this.error = 'Accès à la position refusé';
-            break;
-          case error.POSITION_UNAVAILABLE:
-            this.error = 'Position non disponible';
-            break;
-          default:
-            this.error = 'Erreur de géolocalisation';
-        }
+        this.error = this.getGeolocationError(error);
       }
     );
+  }
+
+  private getGeolocationError(error: GeolocationPositionError): string {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return 'Accès à la position refusé';
+      case error.POSITION_UNAVAILABLE:
+        return 'Position non disponible';
+      default:
+        return 'Erreur de géolocalisation';
+    }
   }
 
   /**
    * Applique les filtres ville et marque
    */
-  applyFilters() {
+  applyFilters(): void {
     let result = [...this.boutiques];
     
     if (this.selectedCity) {
@@ -145,7 +148,7 @@ export class Boutiques implements OnInit {
   /**
    * Réinitialise les filtres
    */
-  resetFilters() {
+  resetFilters(): void {
     this.selectedCity = '';
     this.selectedBrand = '';
     this.searchMode = 'city';
@@ -153,9 +156,9 @@ export class Boutiques implements OnInit {
   }
 
   /**
-   * Ouvre Google Maps avec la direction
+   * Ouvre Google Maps avec l'itinéraire
    */
-  openMaps(boutique: Boutique) {
+  openMaps(boutique: Boutique): void {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${boutique.lat},${boutique.lon}`;
     window.open(url, '_blank');
   }
@@ -163,46 +166,26 @@ export class Boutiques implements OnInit {
   /**
    * Ouvre le site web
    */
-  openWebsite(url?: string) {
+  openWebsite(url?: string): void {
     if (!url) return;
-    if (!url.startsWith('http')) {
-      url = 'https://' + url;
-    }
-    window.open(url, '_blank');
+    const fullUrl = url.startsWith('http') ? url : 'https://' + url;
+    window.open(fullUrl, '_blank');
   }
 
   /**
-   * Appelle le numéro
+   * Appelle le numéro de téléphone
    */
-  callPhone(phone?: string) {
+  callPhone(phone?: string): void {
     if (!phone) return;
     window.location.href = `tel:${phone}`;
   }
 
   /**
-   * Retourne l'icône de la marque
-   */
-  getBrandIcon(brand: string): string {
-    const icons: { [key: string]: string } = {
-      'Sephora': '💄',
-      'Nocibé': '🌸',
-      'Marionnaud': '💐',
-      'Douglas': '✨',
-      'Yves Rocher': '🌿',
-      "L'Occitane": '🪻',
-      'Fragonard': '🏵️'
-    };
-    return icons[brand] || '🧴';
-  }
-
-  /**
-   * Formate la distance
+   * Formate la distance pour l'affichage
    */
   formatDistance(distance?: number): string {
     if (!distance) return '';
-    if (distance < 1) {
-      return `${Math.round(distance * 1000)} m`;
-    }
+    if (distance < 1) return `${Math.round(distance * 1000)} m`;
     return `${distance.toFixed(1)} km`;
   }
 }

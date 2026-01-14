@@ -2,21 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 
-// Interfaces pour typer les données Overpass
+/**
+ * Élément retourné par l'API Overpass
+ */
 export interface OverpassElement {
   type: 'node' | 'way' | 'relation';
   id: number;
   lat?: number;
   lon?: number;
-  center?: {
-    lat: number;
-    lon: number;
-  };
+  center?: { lat: number; lon: number };
   tags?: {
     name?: string;
     shop?: string;
     brand?: string;
-    'brand:wikidata'?: string;
     opening_hours?: string;
     phone?: string;
     website?: string;
@@ -28,13 +26,18 @@ export interface OverpassElement {
   };
 }
 
+/**
+ * Réponse de l'API Overpass
+ */
 export interface OverpassResponse {
   version: number;
   generator: string;
   elements: OverpassElement[];
 }
 
-// Interface simplifiée pour l'affichage
+/**
+ * Magasin de parfum formaté
+ */
 export interface PerfumeStore {
   id: number;
   name: string;
@@ -48,59 +51,47 @@ export interface PerfumeStore {
   openingHours?: string;
 }
 
+/**
+ * Service d'interrogation de l'API Overpass (OpenStreetMap)
+ * Permet de rechercher des parfumeries par ville ou coordonnées GPS
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class OverpassService {
-  private apiUrl = 'https://overpass-api.de/api/interpreter';
+  private readonly apiUrl = 'https://overpass-api.de/api/interpreter';
 
-  // Marques de parfumerie à rechercher
-  private perfumeShopBrands = [
-    'Sephora',
-    'Nocibé',
-    'Marionnaud',
-    'Douglas',
-    'The Body Shop',
-    'Yves Rocher',
-    'L\'Occitane',
-    'Fragonard',
-    'perfumery',
-    'cosmetics'
+  private readonly perfumeShopBrands = [
+    'Sephora', 'Nocibé', 'Marionnaud', 'Douglas',
+    'The Body Shop', 'Yves Rocher', "L'Occitane", 'Fragonard'
   ];
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Recherche les magasins de parfum dans une ville donnée
+   * Recherche les magasins de parfum dans une ville
+   * @param city - Nom de la ville
    */
-  getPerfumeStores(city: string = 'Paris'): Observable<PerfumeStore[]> {
-    const query = this.buildQuery(city);
-    
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/x-www-form-urlencoded'
-    });
-
-    const body = `data=${encodeURIComponent(query)}`;
-
-    return this.http.post<OverpassResponse>(this.apiUrl, body, { headers }).pipe(
-      map(response => this.transformResponse(response)),
-      catchError(error => {
-        console.error('Erreur Overpass API:', error);
-        return of([]);
-      })
-    );
+  getPerfumeStores(city = 'Paris'): Observable<PerfumeStore[]> {
+    const query = this.buildQueryByCity(city);
+    return this.executeQuery(query);
   }
 
   /**
    * Recherche les magasins de parfum autour d'une position GPS
+   * @param lat - Latitude
+   * @param lon - Longitude
+   * @param radius - Rayon en mètres
    */
-  getPerfumeStoresNearby(lat: number, lon: number, radius: number = 5000): Observable<PerfumeStore[]> {
+  getPerfumeStoresNearby(lat: number, lon: number, radius = 5000): Observable<PerfumeStore[]> {
     const query = this.buildQueryByCoords(lat, lon, radius);
-    
+    return this.executeQuery(query);
+  }
+
+  private executeQuery(query: string): Observable<PerfumeStore[]> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
     });
-
     const body = `data=${encodeURIComponent(query)}`;
 
     return this.http.post<OverpassResponse>(this.apiUrl, body, { headers }).pipe(
@@ -112,10 +103,7 @@ export class OverpassService {
     );
   }
 
-  /**
-   * Construit la requête Overpass pour une ville
-   */
-  private buildQuery(city: string): string {
+  private buildQueryByCity(city: string): string {
     const brandFilters = this.perfumeShopBrands
       .map(brand => `["brand"~"${brand}",i]`)
       .join('');
@@ -131,13 +119,9 @@ area["name"="${city}"]->.searchArea;
   way["shop"="cosmetics"](area.searchArea);
   way${brandFilters}(area.searchArea);
 );
-out center;
-    `.trim();
+out center;`.trim();
   }
 
-  /**
-   * Construit la requête Overpass pour des coordonnées GPS
-   */
   private buildQueryByCoords(lat: number, lon: number, radius: number): string {
     return `
 [out:json][timeout:30];
@@ -149,13 +133,9 @@ out center;
   way["shop"="cosmetics"](around:${radius},${lat},${lon});
   way["brand"~"Sephora|Nocibé|Marionnaud|Douglas",i](around:${radius},${lat},${lon});
 );
-out center;
-    `.trim();
+out center;`.trim();
   }
 
-  /**
-   * Transforme la réponse Overpass en liste de magasins
-   */
   private transformResponse(response: OverpassResponse): PerfumeStore[] {
     if (!response.elements) return [];
 
@@ -166,12 +146,7 @@ out center;
         const lon = el.lon ?? el.center?.lon ?? 0;
         const tags = el.tags || {};
 
-        // Construction de l'adresse
-        const addressParts = [
-          tags['addr:housenumber'],
-          tags['addr:street']
-        ].filter(Boolean);
-        
+        const addressParts = [tags['addr:housenumber'], tags['addr:street']].filter(Boolean);
         const address = addressParts.join(' ') || 'Adresse non disponible';
         const city = tags['addr:city'] || tags['addr:postcode'] || '';
 
@@ -191,34 +166,25 @@ out center;
       .filter(store => store.lat !== 0 && store.lon !== 0);
   }
 
-  /**
-   * Détecte la marque à partir du nom du magasin
-   */
   private detectBrand(name: string): string {
     const nameLower = name.toLowerCase();
     
-    if (nameLower.includes('sephora')) return 'Sephora';
-    if (nameLower.includes('nocibé') || nameLower.includes('nocibe')) return 'Nocibé';
-    if (nameLower.includes('marionnaud')) return 'Marionnaud';
-    if (nameLower.includes('douglas')) return 'Douglas';
-    if (nameLower.includes('yves rocher')) return 'Yves Rocher';
-    if (nameLower.includes('occitane')) return "L'Occitane";
-    if (nameLower.includes('body shop')) return 'The Body Shop';
-    if (nameLower.includes('fragonard')) return 'Fragonard';
+    const brandMap: Record<string, string> = {
+      'sephora': 'Sephora',
+      'nocibé': 'Nocibé',
+      'nocibe': 'Nocibé',
+      'marionnaud': 'Marionnaud',
+      'douglas': 'Douglas',
+      'yves rocher': 'Yves Rocher',
+      'occitane': "L'Occitane",
+      'body shop': 'The Body Shop',
+      'fragonard': 'Fragonard'
+    };
+    
+    for (const [key, value] of Object.entries(brandMap)) {
+      if (nameLower.includes(key)) return value;
+    }
     
     return 'Parfumerie';
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

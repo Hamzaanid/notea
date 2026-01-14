@@ -1,12 +1,8 @@
-/* Layout Styles */
+/* Layout - Nôtéa */
 
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+main {
+  padding-top: 70px; // Hauteur du header fixe
+  min-height: calc(100vh - 70px); // Hauteur totale moins le header
 }
 
-.main-content {
-  flex: 1;
-  /* Pas de padding-top car le header est transparent */
-}
+// Styles minimaux, Bootstrap gère le reste

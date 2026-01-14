@@ -1,141 +1,148 @@
-<div class="home">
+<!-- Page d'accueil - Nôtéa -->
+<div class="home-page">
   
   <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">
-        <span class="line">Évoquez chaque</span>
-        <span class="line">émotion avec</span>
-        <span class="line brand">NÔTÉA</span>
-      </h1>
-      <p class="hero-subtitle">
-        Découvrez les parfums adaptés à votre personnalité
-      </p>
+  <section class="hero-section d-flex align-items-center justify-content-center text-center">
+    <div class="container py-5">
+      <div class="hero-content">
+        <h1 class="display-4 font-heading text-cream mb-3">
+          <span class="d-block">Évoquez chaque</span>
+          <span class="d-block">émotion avec</span>
+          <span class="d-block text-gold-light fw-semibold" style="letter-spacing: 10px;">NÔTÉA</span>
+        </h1>
+        <p class="lead text-muted-custom mb-4">
+          Découvrez les parfums adaptés à votre personnalité
+        </p>
+      </div>
     </div>
-    
-    <!-- <div class="hero-image">
-      <div class="perfume-glow"></div>
-      <img src="assets/perfume-hero.png" alt="Parfum Nôtéa" class="perfume-bottle" 
-           onerror="this.style.display='none'">
-    </div> -->
-
   </section>
 
   <!-- Carousel Section -->
-  <section class="carousel-section">
-    <div class="carousel-container" 
-         (mouseenter)="stopAutoSlide()" 
-         (mouseleave)="startAutoSlide()">
-      
-      <!-- Slides -->
-      <div class="carousel-track" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
-        <div class="carousel-slide" *ngFor="let slide of slides">
-          <div class="slide-image" [style.backgroundImage]="'url(' + slide.image + ')'"></div>
-          <div class="slide-overlay"></div>
-          <div class="slide-content">
-            <h3 class="slide-title">{{ slide.title }}</h3>
-            <p class="slide-subtitle">{{ slide.subtitle }}</p>
+  <section class="py-5">
+    <div class="container">
+      <div class="carousel-wrapper position-relative rounded overflow-hidden shadow-lg"
+           (mouseenter)="stopAutoSlide()" 
+           (mouseleave)="startAutoSlide()">
+        
+        <!-- Slides -->
+        <div class="carousel-track d-flex" 
+             [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+          <div class="carousel-slide position-relative" *ngFor="let slide of slides">
+            <div class="slide-image" [style.backgroundImage]="'url(' + slide.image + ')'"></div>
+            <div class="slide-overlay"></div>
+            <div class="slide-content position-absolute bottom-0 start-0 end-0 p-4 p-md-5">
+              <h3 class="h2 font-heading text-gold-light mb-2 text-uppercase" style="letter-spacing: 3px;">
+                {{ slide.title }}
+              </h3>
+              <p class="text-cream opacity-75 mb-0">{{ slide.subtitle }}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Navigation Arrows -->
-      <button class="carousel-btn prev" (click)="prevSlide()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-      </button>
-      <button class="carousel-btn next" (click)="nextSlide()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </button>
-
-      <!-- Dots Indicator -->
-      <div class="carousel-dots">
-        <button 
-          *ngFor="let slide of slides; let i = index"
-          class="dot"
-          [class.active]="i === currentSlide"
-          (click)="goToSlide(i)">
+        <!-- Navigation Arrows -->
+        <button class="carousel-nav-btn prev" (click)="prevSlide()" aria-label="Slide précédent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
         </button>
+        <button class="carousel-nav-btn next" (click)="nextSlide()" aria-label="Slide suivant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+        <!-- Dots Indicator -->
+        <div class="carousel-dots d-flex gap-2 position-absolute bottom-0 end-0 p-4">
+          <button *ngFor="let slide of slides; let i = index"
+                  class="dot"
+                  [class.active]="i === currentSlide"
+                  (click)="goToSlide(i)"
+                  [attr.aria-label]="'Aller au slide ' + (i + 1)">
+          </button>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Selection Section -->
-  <section class="selection-section">
-    <h2 class="selection-title">Sélection de parfums par familles</h2>
-    
-    <div class="perfume-families">
-      <div class="family-item">
-        <div class="family-bottle amber"></div>
-        <span class="family-name">Ambré</span>
+  <section class="py-5 text-center">
+    <div class="container">
+      <h2 class="h3 font-heading text-gold-light mb-5" style="letter-spacing: 2px;">
+        Sélection de parfums par familles
+      </h2>
+      
+      <div class="row justify-content-center g-4 mb-5">
+        <div class="col-auto" *ngFor="let family of perfumeFamilies">
+          <div class="family-item text-center">
+            <div class="family-bottle" [ngClass]="family.class"></div>
+            <span class="d-block mt-2 text-muted-custom font-body" style="font-size: 0.85rem;">
+              {{ family.name }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="family-item">
-        <div class="family-bottle floral"></div>
-        <span class="family-name">Floral</span>
-      </div>
-      <div class="family-item">
-        <div class="family-bottle woody"></div>
-        <span class="family-name">Boisé</span>
-      </div>
-      <div class="family-item">
-        <div class="family-bottle fresh"></div>
-        <span class="family-name">Frais</span>
-      </div>
-      <div class="family-item">
-        <div class="family-bottle oriental"></div>
-        <span class="family-name">Oriental</span>
-      </div>
+      
+      <a routerLink="/ListParfums" class="btn btn-outline-primary px-4">
+        Voir le catalogue
+      </a>
     </div>
-    
-    <a routerLink="/ListParfums" class="view-all-btn">
-      Voir le catalogue
-    </a>
   </section>
 
   <!-- About Section -->
-  <section class="about-section">
-    <div class="about-content">
-      <h2 class="about-title">L'art de la parfumerie sur mesure</h2>
-      <p class="about-text">
-        Nôtéa vous guide vers des fragrances qui révèlent votre essence. 
-        À travers notre questionnaire personnalisé, découvrez les parfums 
-        qui correspondent à votre personnalité, vos goûts et vos émotions.
-      </p>
-      <div class="about-features">
-        <div class="feature">
-          <span class="feature-number">01</span>
-          <span class="feature-text">Test de personnalité</span>
-        </div>
-        <div class="feature">
-          <span class="feature-number">02</span>
-          <span class="feature-text">Profil olfactif unique</span>
-        </div>
-        <div class="feature">
-          <span class="feature-number">03</span>
-          <span class="feature-text">Recommandations sur mesure</span>
+  <section class="py-5 about-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="h3 font-heading text-gold-light mb-4" style="letter-spacing: 2px;">
+            L'art de la parfumerie sur mesure
+          </h2>
+          <p class="text-muted-custom mb-5" style="font-size: 1.15rem; line-height: 1.8;">
+            Nôtéa vous guide vers des fragrances qui révèlent votre essence. 
+            À travers notre questionnaire personnalisé, découvrez les parfums 
+            qui correspondent à votre personnalité, vos goûts et vos émotions.
+          </p>
+          
+          <div class="row justify-content-center g-4 g-lg-5">
+            <div class="col-auto text-center">
+              <div class="feature-number font-heading text-gold opacity-50 mb-2">01</div>
+              <div class="text-muted-custom font-body" style="font-size: 0.95rem;">Test de personnalité</div>
+            </div>
+            <div class="col-auto text-center">
+              <div class="feature-number font-heading text-gold opacity-50 mb-2">02</div>
+              <div class="text-muted-custom font-body" style="font-size: 0.95rem;">Profil olfactif unique</div>
+            </div>
+            <div class="col-auto text-center">
+              <div class="feature-number font-heading text-gold opacity-50 mb-2">03</div>
+              <div class="text-muted-custom font-body" style="font-size: 0.95rem;">Recommandations sur mesure</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA Section - Formulaire en dernier -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <div class="cta-decoration">✦</div>
-      <h2 class="cta-title">Trouvez votre parfum idéal</h2>
-      <p class="cta-text">
-        Répondez à notre questionnaire personnalisé et découvrez 
-        les fragrances qui correspondent à votre personnalité unique.
-      </p>
-      <a class="cta-btn" routerLink="/test-personnalite">
-        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        Remplir le formulaire
-      </a>
+  <!-- CTA Section -->
+  <section class="py-5 cta-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+          <div class="cta-decoration text-gold opacity-75 mb-3" style="font-size: 2rem;">✦</div>
+          <h2 class="h3 font-heading text-gold-light mb-3" style="letter-spacing: 2px;">
+            Trouvez votre parfum idéal
+          </h2>
+          <p class="text-muted-custom mb-4" style="font-size: 1.15rem; line-height: 1.8;">
+            Répondez à notre questionnaire personnalisé et découvrez 
+            les fragrances qui correspondent à votre personnalité unique.
+          </p>
+          <a class="btn btn-primary btn-lg d-inline-flex align-items-center gap-2 px-4" 
+             routerLink="/test-personnalite">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Remplir le formulaire
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 

@@ -6,7 +6,11 @@ interface CarouselSlide {
   image: string;
   title: string;
   subtitle: string;
-  link?: string;
+}
+
+interface PerfumeFamily {
+  name: string;
+  class: string;
 }
 
 @Component({
@@ -17,7 +21,6 @@ interface CarouselSlide {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  // Carousel
   currentSlide = 0;
   private autoSlideInterval: ReturnType<typeof setInterval> | null = null;
   
@@ -40,41 +43,49 @@ export class HomeComponent implements OnInit, OnDestroy {
     {
       image: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=1200&q=80',
       title: 'Coffrets Cadeaux',
-      subtitle: 'L\'art d\'offrir un parfum d\'exception'
+      subtitle: "L'art d'offrir un parfum d'exception"
     }
   ];
 
-  ngOnInit() {
+  perfumeFamilies: PerfumeFamily[] = [
+    { name: 'Ambré', class: 'amber' },
+    { name: 'Floral', class: 'floral' },
+    { name: 'Boisé', class: 'woody' },
+    { name: 'Frais', class: 'fresh' },
+    { name: 'Oriental', class: 'oriental' }
+  ];
+
+  ngOnInit(): void {
     this.startAutoSlide();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.stopAutoSlide();
   }
 
-  startAutoSlide() {
+  startAutoSlide(): void {
     this.autoSlideInterval = setInterval(() => {
       this.nextSlide();
-    }, 5000); // Change toutes les 5 secondes
+    }, 5000);
   }
 
-  stopAutoSlide() {
+  stopAutoSlide(): void {
     if (this.autoSlideInterval) {
       clearInterval(this.autoSlideInterval);
+      this.autoSlideInterval = null;
     }
   }
 
-  nextSlide() {
+  nextSlide(): void {
     this.currentSlide = (this.currentSlide + 1) % this.slides.length;
   }
 
-  prevSlide() {
+  prevSlide(): void {
     this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
   }
 
-  goToSlide(index: number) {
+  goToSlide(index: number): void {
     this.currentSlide = index;
-    // Reset auto-slide timer
     this.stopAutoSlide();
     this.startAutoSlide();
   }

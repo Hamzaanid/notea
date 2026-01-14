@@ -4,6 +4,10 @@ import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.services/auth.service';
 
+/**
+ * Composant de connexion
+ * Gère l'authentification et la réinitialisation du mot de passe
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -35,14 +39,14 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
-    if (this.form.invalid) {
-      return;
-    }
+  /**
+   * Soumet le formulaire de connexion
+   */
+  onSubmit(): void {
+    if (this.form.invalid) return;
 
     this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.clearMessages();
     
     const { email, password } = this.form.value;
 
@@ -59,54 +63,40 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        console.error(err);
-        
-        switch (err.code) {
-          case 'auth/user-not-found':
-            this.errorMessage = 'Aucun compte trouvé avec cet email.';
-            break;
-          case 'auth/wrong-password':
-            this.errorMessage = 'Mot de passe incorrect.';
-            break;
-          case 'auth/invalid-email':
-            this.errorMessage = 'Email invalide.';
-            break;
-          case 'auth/invalid-credential':
-            this.errorMessage = 'Identifiants incorrects.';
-            break;
-          case 'auth/too-many-requests':
-            this.errorMessage = 'Trop de tentatives. Réessayez plus tard.';
-            break;
-          default:
-            this.errorMessage = 'Erreur de connexion. Vérifiez vos identifiants.';
-        }
+        this.errorMessage = this.getLoginErrorMessage(err.code);
       }
     });
   }
 
-  openResetModal() {
+  /**
+   * Ouvre le modal de réinitialisation du mot de passe
+   */
+  openResetModal(): void {
     this.showResetModal = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    // Pré-remplir avec l'email du formulaire de login si disponible
-    if (this.form.get('email')?.value) {
-      this.resetForm.patchValue({ email: this.form.get('email')?.value });
+    this.clearMessages();
+    
+    const email = this.form.get('email')?.value;
+    if (email) {
+      this.resetForm.patchValue({ email });
     }
   }
 
-  closeResetModal() {
+  /**
+   * Ferme le modal de réinitialisation
+   */
+  closeResetModal(): void {
     this.showResetModal = false;
     this.resetForm.reset();
   }
 
-  onResetPassword() {
-    if (this.resetForm.invalid) {
-      return;
-    }
+  /**
+   * Soumet la demande de réinitialisation du mot de passe
+   */
+  onResetPassword(): void {
+    if (this.resetForm.invalid) return;
 
     this.resetLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.clearMessages();
 
     const email = this.resetForm.get('email')?.value;
 
@@ -114,24 +104,36 @@ export class LoginComponent {
       next: () => {
         this.resetLoading = false;
         this.successMessage = 'Un email de réinitialisation a été envoyé. Vérifiez votre boîte mail.';
-        this.showResetModal = false;
-        this.resetForm.reset();
+        this.closeResetModal();
       },
       error: (err) => {
         this.resetLoading = false;
-        console.error(err);
-        
-        switch (err.code) {
-          case 'auth/user-not-found':
-            this.errorMessage = 'Aucun compte trouvé avec cet email.';
-            break;
-          case 'auth/invalid-email':
-            this.errorMessage = 'Email invalide.';
-            break;
-          default:
-            this.errorMessage = 'Erreur lors de l\'envoi. Réessayez.';
-        }
+        this.errorMessage = this.getResetErrorMessage(err.code);
       }
     });
+  }
+
+  private clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  private getLoginErrorMessage(code: string): string {
+    const messages: Record<string, string> = {
+      'auth/user-not-found': 'Aucun compte trouvé avec cet email.',
+      'auth/wrong-password': 'Mot de passe incorrect.',
+      'auth/invalid-email': 'Email invalide.',
+      'auth/invalid-credential': 'Identifiants incorrects.',
+      'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.'
+    };
+    return messages[code] ?? 'Erreur de connexion. Vérifiez vos identifiants.';
+  }
+
+  private getResetErrorMessage(code: string): string {
+    const messages: Record<string, string> = {
+      'auth/user-not-found': 'Aucun compte trouvé avec cet email.',
+      'auth/invalid-email': 'Email invalide.'
+    };
+    return messages[code] ?? "Erreur lors de l'envoi. Réessayez.";
   }
 }

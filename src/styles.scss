@@ -1,24 +1,53 @@
-/* Global Styles - Nôtéa Luxe */
+/**
+ * Nôtéa - Global Styles
+ * Thème luxe ambré avec Bootstrap
+ */
 
+// ============================================
+// IMPORTS
+// ============================================
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant:wght@300;400;500;600;700&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+// ============================================
+// CSS VARIABLES - Palette Ambrée Luxe
+// ============================================
 :root {
-  /* Palette Ambrée Luxe */
+  // Couleurs principales
   --amber-dark: #1a0a04;
   --amber-deep: #2d1810;
   --amber-rich: #5c2a1a;
   --amber-warm: #8b4020;
   --amber-glow: #c45a28;
+  
+  // Accents dorés
   --gold: #d4a855;
   --gold-light: #f0d9a0;
+  --gold-dark: #b8922e;
+  
+  // Neutres
   --cream: #faf3e8;
   --cream-soft: rgba(250, 243, 232, 0.85);
+  
+  // États
+  --success: #4ecdc4;
+  --error: #e74c3c;
+  --info: #d4a855;
+  
+  // Typographie
+  --font-heading: 'Cinzel', 'Georgia', serif;
+  --font-body: 'Cormorant', 'Georgia', serif;
+  
+  // Transitions
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
+}
+
+// ============================================
+// RESET & BASE
+// ============================================
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html {
@@ -26,50 +55,401 @@ html {
 }
 
 body {
-  font-family: 'Cormorant', 'Georgia', serif;
+  font-family: var(--font-body);
   font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--cream);
   background: radial-gradient(ellipse at top center, #3d1a10 0%, #1a0a04 50%, #0d0502 100%);
   background-attachment: fixed;
-  color: var(--cream);
   min-height: 100vh;
-  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
-/* Container */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+// Desktop font size increase
+@media (min-width: 768px) {
+  body {
+    font-size: 1.125rem;
+  }
 }
 
-/* Typography - Plus luxueux sans italique excessif */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cinzel', 'Georgia', serif;
+// ============================================
+// TYPOGRAPHY
+// ============================================
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: 1px;
+  color: var(--gold-light);
+  margin-bottom: 0.75rem;
 }
 
-/* Links */
+h1, .h1 { font-size: clamp(2rem, 5vw, 2.75rem); }
+h2, .h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
+h3, .h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+h4, .h4 { font-size: 1.25rem; }
+h5, .h5 { font-size: 1rem; }
+h6, .h6 { font-size: 0.875rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+// ============================================
+// LINKS
+// ============================================
 a {
   color: var(--gold);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-normal);
+  
+  &:hover, &:focus {
+    color: var(--gold-light);
+    text-decoration: none;
+  }
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Buttons
+// ============================================
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 2px;
+  transition: all var(--transition-normal);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+  border: none;
+  color: var(--amber-dark);
+  
+  &:hover, &:focus {
+    background: linear-gradient(135deg, #fff5e0 0%, var(--gold-light) 100%);
+    color: var(--amber-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 168, 85, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+.btn-outline-primary {
+  color: var(--gold);
+  border-color: rgba(212, 168, 85, 0.5);
+  background: transparent;
+  
+  &:hover, &:focus {
+    background: rgba(212, 168, 85, 0.1);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+}
+
+.btn-outline-secondary {
+  color: rgba(250, 243, 232, 0.7);
+  border-color: rgba(212, 168, 85, 0.2);
+  background: transparent;
+  
+  &:hover, &:focus {
+    background: transparent;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+}
+
+.btn-link {
+  color: var(--gold);
+  text-decoration: none;
   
   &:hover {
     color: var(--gold-light);
   }
 }
 
-/* Buttons */
-.btn {
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-weight: 500;
-  letter-spacing: 1px;
+// ============================================
+// BOOTSTRAP OVERRIDES - Forms
+// ============================================
+.form-control,
+.form-select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 168, 85, 0.2);
+  border-radius: 2px;
+  padding: 0.875rem 1rem;
+  transition: all var(--transition-normal);
+  
+  &::placeholder {
+    color: rgba(250, 243, 232, 0.3);
+  }
+  
+  &:focus {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 0.2rem rgba(212, 168, 85, 0.15);
+    color: var(--cream);
+  }
+  
+  &.is-invalid {
+    border-color: var(--error);
+  }
 }
 
-/* Scrollbar */
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d4a855' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  
+  option {
+    background: var(--amber-dark);
+    color: var(--cream);
+  }
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(240, 217, 160, 0.7);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  color: rgba(250, 243, 232, 0.5);
+}
+
+.invalid-feedback {
+  color: var(--error);
+  font-size: 0.8rem;
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Cards
+// ============================================
+.card {
+  background: rgba(45, 24, 16, 0.4);
+  border: 1px solid rgba(212, 168, 85, 0.08);
+  border-radius: 4px;
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    border-color: rgba(212, 168, 85, 0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.card-text {
+  color: rgba(250, 243, 232, 0.7);
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Navbar
+// ============================================
+.navbar {
+  font-family: var(--font-body);
+  transition: all var(--transition-slow);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: var(--cream);
+  opacity: 0.8;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all var(--transition-normal);
+  
+  &:hover, &:focus {
+    color: var(--gold-light);
+    opacity: 1;
+  }
+  
+  &.active {
+    color: var(--gold);
+    opacity: 1;
+  }
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  color: var(--gold-light) !important;
+  letter-spacing: 4px;
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Alerts
+// ============================================
+.alert {
+  border-radius: 2px;
+  font-family: var(--font-body);
+}
+
+.alert-success {
+  background: rgba(78, 205, 196, 0.1);
+  border-color: rgba(78, 205, 196, 0.3);
+  color: #7dce7d;
+}
+
+.alert-danger {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #ff8080;
+}
+
+.alert-info {
+  background: rgba(212, 168, 85, 0.1);
+  border-color: rgba(212, 168, 85, 0.3);
+  color: var(--gold-light);
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Badges
+// ============================================
+.badge {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.bg-gold {
+  background: var(--gold) !important;
+  color: var(--amber-dark) !important;
+}
+
+.bg-amber {
+  background: rgba(92, 42, 26, 0.9) !important;
+  color: var(--gold-light) !important;
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Modals
+// ============================================
+.modal-content {
+  background: var(--amber-deep);
+  border: 1px solid rgba(212, 168, 85, 0.2);
+  border-radius: 2px;
+}
+
+.modal-header {
+  border-bottom-color: rgba(212, 168, 85, 0.1);
+}
+
+.modal-footer {
+  border-top-color: rgba(212, 168, 85, 0.1);
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  color: var(--gold-light);
+}
+
+.btn-close {
+  filter: invert(1) sepia(1) saturate(0.5) hue-rotate(10deg);
+  opacity: 0.6;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Pagination
+// ============================================
+.pagination {
+  gap: 0.35rem;
+}
+
+.page-link {
+  font-family: var(--font-body);
+  color: rgba(250, 243, 232, 0.7);
+  background: transparent;
+  border: 1px solid rgba(212, 168, 85, 0.15);
+  border-radius: 2px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  
+  &:hover {
+    background: transparent;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+}
+
+.page-item.active .page-link {
+  background: rgba(212, 168, 85, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.page-item.disabled .page-link {
+  opacity: 0.3;
+  background: transparent;
+  border-color: rgba(212, 168, 85, 0.15);
+}
+
+// ============================================
+// BOOTSTRAP OVERRIDES - Spinner
+// ============================================
+.spinner-border {
+  color: var(--gold);
+}
+
+// ============================================
+// CUSTOM UTILITIES
+// ============================================
+
+// Text colors
+.text-gold { color: var(--gold) !important; }
+.text-gold-light { color: var(--gold-light) !important; }
+.text-cream { color: var(--cream) !important; }
+.text-muted-custom { color: rgba(250, 243, 232, 0.5) !important; }
+
+// Backgrounds
+.bg-amber-dark { background-color: var(--amber-dark) !important; }
+.bg-amber-deep { background-color: var(--amber-deep) !important; }
+.bg-transparent-dark { background: rgba(26, 10, 4, 0.6) !important; }
+.bg-glass {
+  background: rgba(45, 24, 16, 0.95) !important;
+  backdrop-filter: blur(10px);
+}
+
+// Borders
+.border-gold { border-color: var(--gold) !important; }
+.border-gold-subtle { border-color: rgba(212, 168, 85, 0.15) !important; }
+
+// Font families
+.font-heading { font-family: var(--font-heading) !important; }
+.font-body { font-family: var(--font-body) !important; }
+
+// ============================================
+// SCROLLBAR
+// ============================================
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -87,8 +467,235 @@ a {
   }
 }
 
-/* Selection */
+// ============================================
+// SELECTION
+// ============================================
 ::selection {
   background: rgba(212, 168, 85, 0.3);
   color: var(--cream);
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+.toast-notification {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(45, 24, 16, 0.95);
+  border: 1px solid rgba(212, 168, 85, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  &.success {
+    border-color: rgba(78, 205, 196, 0.5);
+    
+    .toast-icon {
+      background: rgba(78, 205, 196, 0.2);
+      color: #4ecdc4;
+    }
+  }
+  
+  &.error {
+    border-color: rgba(231, 76, 60, 0.5);
+    
+    .toast-icon {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+    }
+  }
+  
+  &.info {
+    border-color: rgba(212, 168, 85, 0.5);
+    
+    .toast-icon {
+      background: rgba(212, 168, 85, 0.2);
+      color: var(--gold);
+    }
+  }
+  
+  .toast-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  .toast-message {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: 0.5px;
+  }
+}
+
+// ============================================
+// PRODUCT CARD COMPONENTS
+// ============================================
+.product-card {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  
+  .product-image {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(45, 24, 16, 0.5) 0%, rgba(26, 10, 4, 0.8) 100%);
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.5s ease;
+    }
+  }
+  
+  &:hover .product-image img {
+    transform: scale(1.05);
+  }
+  
+  .product-brand {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  
+  .product-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--cream);
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .product-price {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--cream);
+    letter-spacing: 1px;
+  }
+}
+
+// Stars rating
+.stars {
+  display: flex;
+  gap: 1px;
+  
+  .star {
+    font-size: 0.8rem;
+    color: rgba(212, 168, 85, 0.25);
+    
+    &.full { color: var(--gold); }
+    &.half { color: rgba(212, 168, 85, 0.6); }
+  }
+}
+
+// Favorite button
+.favorite-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 10, 4, 0.7);
+  border: 1px solid rgba(212, 168, 85, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 3;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(4px);
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: rgba(250, 243, 232, 0.6);
+    fill: transparent;
+    transition: all var(--transition-normal);
+  }
+  
+  &:hover {
+    background: rgba(26, 10, 4, 0.9);
+    border-color: rgba(212, 168, 85, 0.5);
+    transform: scale(1.1);
+    
+    svg { stroke: var(--gold); }
+  }
+  
+  &.active {
+    background: rgba(212, 168, 85, 0.2);
+    border-color: var(--gold);
+    
+    svg {
+      stroke: #e74c3c;
+      fill: #e74c3c;
+    }
+  }
+}
+
+// ============================================
+// LOADING STATES
+// ============================================
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(212, 168, 85, 0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ============================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .favorite-btn {
+    width: 34px;
+    height: 34px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
 }
