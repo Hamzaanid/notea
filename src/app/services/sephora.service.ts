@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-/**
- * Interface représentant un produit Sephora
- */
 export interface SephoraProduct {
   productId: string;
-  skuId?: string;
+  skuId?: string;        // SKU ID (ex: "P518158")
   brandName: string;
   displayName: string;
   heroImage: string;
@@ -17,7 +14,7 @@ export interface SephoraProduct {
   reviews: string;
   targetUrl: string;
   currentSku: {
-    skuId?: string;
+    skuId?: string;      // SKU ID dans currentSku
     listPrice: string;
     isNew: boolean;
     isLimitedEdition: boolean;
@@ -25,30 +22,80 @@ export interface SephoraProduct {
   };
 }
 
-/**
- * Interface pour les catégories de filtres
- */
 export interface FilterCategory {
   categoryId: string;
   displayName: string;
   count: number;
 }
 
-/**
- * Service de communication avec l'API Sephora
- * Gère la récupération et la recherche de produits
- */
+// ========== INTERFACES STORES ==========
+
+export interface StoreHours {
+  mondayHours?: string;
+  tuesdayHours?: string;
+  wednesdayHours?: string;
+  thursdayHours?: string;
+  fridayHours?: string;
+  saturdayHours?: string;
+  sundayHours?: string;
+  closedDays?: string;
+  specialHours?: any;
+  timeZone?: string;
+}
+
+export interface StoreAddress {
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+}
+
+export interface SephoraStore {
+  storeId: string;
+  storeType: string; // "SEPHORA" ou "SIKLS" (Sephora at Kohl's)
+  displayName: string;
+  distance?: number;
+  latitude: number;
+  longitude: number;
+  address: StoreAddress;
+  phone?: string;
+  mallName?: string;
+  storeHours?: StoreHours;
+  curbsideHours?: StoreHours;
+  isBopisable?: boolean; // Buy Online Pick up In Store
+  isCurbsideEnabled?: boolean;
+  samedayDeliveryEnabled?: boolean;
+  isOnlineReservationEnabled?: boolean;
+  vendorName?: string;
+  targetUrl?: string;
+  seoCanonicalUrl?: string;
+  // Champs spécifiques à check-availability
+  availabilityStatus?: string; // "In Stock" ou "Out of Stock"
+  inStoreAvailability?: number; // Quantité disponible
+}
+
+export interface StoresListResponse {
+  stores: SephoraStore[];
+}
+
+export interface AvailabilityResponse {
+  stores: SephoraStore[];
+  storeMessages?: any[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class SephoraService {
-  private readonly baseUrl = environment.sephora.baseUrl;
-  private readonly headers = new HttpHeaders({
+  private baseUrl = environment.sephora.baseUrl;
+  private headers = new HttpHeaders({
     'x-rapidapi-key': environment.sephora.apiKey,
     'x-rapidapi-host': environment.sephora.apiHost
   });
 
-  /** Catégories disponibles pour le filtrage */
+  // Catégories pour les filtres
   readonly categories: FilterCategory[] = [
     { categoryId: 'cat160006', displayName: 'Tous', count: 1733 },
     { categoryId: 'cat1230039', displayName: 'Femme', count: 1289 },
@@ -62,12 +109,9 @@ export class SephoraService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Récupère la liste des parfums par catégorie
-   * @param categoryId - ID de la catégorie
-   * @param page - Numéro de page
-   * @param pageSize - Nombre de produits par page
+   * Récupère la liste des parfums
    */
-  getProducts(categoryId = 'cat160006', page = 1, pageSize = 24): Observable<any> {
+  getProducts(categoryId: string = 'cat160006', page: number = 1, pageSize: number = 24): Observable<any> {
     const url = `${this.baseUrl}/us/products/v2/list`;
     const params = {
       categoryId,
@@ -84,12 +128,9 @@ export class SephoraService {
   }
 
   /**
-   * Recherche de produits par mot-clé
-   * @param query - Terme de recherche
-   * @param page - Numéro de page
-   * @param pageSize - Nombre de produits par page
+   * Recherche de produits
    */
-  searchProducts(query: string, page = 1, pageSize = 24): Observable<any> {
+  searchProducts(query: string, page: number = 1, pageSize: number = 24): Observable<any> {
     const url = `${this.baseUrl}/us/products/v2/search`;
     const params = {
       q: query,
@@ -106,11 +147,82 @@ export class SephoraService {
   }
 
   /**
-   * Retourne le nombre total de produits pour une catégorie
-   * @param categoryId - ID de la catégorie
+   * Retourne le nombre total pour une catégorie
    */
   getTotalForCategory(categoryId: string): number {
-    const category = this.categories.find(c => c.categoryId === categoryId);
-    return category?.count ?? 0;
+    const cat = this.categories.find(c => c.categoryId === categoryId);
+    return cat ? cat.count : 0;
+  }
+
+  // ========== API STORES ==========
+
+  /**
+   * Récupère la liste des magasins Sephora proches d'une position
+   * @param latitude Latitude de la position
+   * @param longitude Longitude de la position
+   * @param radius Rayon de recherche en miles (défaut: 25)
+   */
+  getStoresList(latitude: number, longitude: number, radius: number = 25): Observable<StoresListResponse> {
+    const url = `${this.baseUrl}/stores/list`;
+    const params = {
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      radius: radius.toString()
+    };
+
+    console.log('API stores/list URL:', url, 'Params:', params);
+
+    return this.http.get<any>(url, { headers: this.headers, params }).pipe(
+      map(response => {
+        console.log('Réponse brute stores/list:', response);
+        // La réponse peut être { stores: [...] } ou directement un tableau [...]
+        if (Array.isArray(response)) {
+          return { stores: response };
+        } else if (response && response.stores) {
+          return { stores: response.stores };
+        }
+        return { stores: [] };
+      }),
+      catchError(error => {
+        console.error('Erreur récupération magasins:', error);
+        return of({ stores: [] });
+      })
+    );
+  }
+
+  /**
+   * Vérifie la disponibilité d'un produit dans les magasins proches
+   * @param skuId ID du SKU du produit (ex: "2210607")
+   * @param latitude Latitude de la position
+   * @param longitude Longitude de la position
+   * @param radius Rayon de recherche en miles (défaut: 25)
+   */
+  checkAvailability(skuId: string, latitude: number, longitude: number, radius: number = 25): Observable<AvailabilityResponse> {
+    const url = `${this.baseUrl}/products/check-availability`;
+    const params = {
+      skuId,
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      radius: radius.toString()
+    };
+
+    console.log('API check-availability URL:', url, 'Params:', params);
+
+    return this.http.get<any>(url, { headers: this.headers, params }).pipe(
+      map(response => {
+        console.log('Réponse brute check-availability:', response);
+        // La réponse peut être { stores: [...] } ou directement un tableau [...]
+        if (Array.isArray(response)) {
+          return { stores: response };
+        } else if (response && response.stores) {
+          return { stores: response.stores };
+        }
+        return { stores: [] };
+      }),
+      catchError(error => {
+        console.error('Erreur vérification disponibilité:', error);
+        return of({ stores: [] });
+      })
+    );
   }
 }

@@ -1,13 +1,13 @@
-<!-- Catalogue de Parfums - Nôtéa -->
-<div class="catalogue-page py-5">
-  
+<div class="container-fluid py-5 catalogue">
   <!-- Toast Notification -->
-  <div class="toast-notification" 
-       [class.show]="showToast"
-       [class.success]="toastType === 'success'"
-       [class.error]="toastType === 'error'"
-       [class.info]="toastType === 'info'"
-       (click)="hideToast()">
+  <div 
+    class="toast-notification position-fixed top-0 start-50 translate-middle-x mt-5" 
+    [class.show]="showToast"
+    [class.success]="toastType === 'success'"
+    [class.error]="toastType === 'error'"
+    [class.info]="toastType === 'info'"
+    (click)="hideToast()"
+    style="z-index: 9999;">
     <div class="toast-icon">
       <span *ngIf="toastType === 'success'">✓</span>
       <span *ngIf="toastType === 'error'">✕</span>
@@ -16,140 +16,332 @@
     <span class="toast-message">{{ toastMessage }}</span>
   </div>
 
-  <div class="container">
-    
-    <!-- Header -->
-    <div class="text-center mb-5">
-      <h1 class="h2 font-heading text-gold-light mb-2" style="letter-spacing: 2px;">Catalogue</h1>
-      <p class="text-muted-custom">Découvrez notre collection de parfums d'exception</p>
+  <!-- Header avec recherche -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+      <h1 class="mb-0">Catalogue</h1>
     </div>
-
-    <!-- Filters Section -->
-    <div class="mb-4">
-      
-      <!-- Search Box -->
-      <div class="row justify-content-center mb-4">
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="input-group">
-            <input type="text" 
-                   class="form-control"
-                   [(ngModel)]="searchQuery"
-                   (keyup.enter)="onSearch()"
-                   placeholder="Rechercher un parfum ou une marque...">
-            <button class="btn btn-outline-primary" (click)="onSearch()" [disabled]="loading">
-              🔍
-            </button>
-            <button class="btn btn-outline-secondary" *ngIf="searchQuery" (click)="clearSearch()">
-              ✕
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category Filters -->
-      <div class="d-flex flex-wrap justify-content-center gap-2">
-        <button *ngFor="let cat of categories"
-                class="btn btn-sm"
-                [class.btn-outline-primary]="selectedCategory !== cat.categoryId"
-                [class.active-filter]="selectedCategory === cat.categoryId"
-                (click)="selectedCategory = cat.categoryId; onCategoryChange()">
-          {{ cat.displayName }}
+    <div class="search-container">
+      <div class="input-group" style="max-width: 300px;">
+        <span class="input-group-text bg-transparent border-gold-subtle">
+          <span>🔍</span>
+        </span>
+        <input 
+          type="text" 
+          class="form-control border-gold-subtle"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Rechercher...">
+        <button class="btn btn-outline-secondary border-gold-subtle" *ngIf="searchQuery" (click)="clearSearch()">
+          ✕
         </button>
       </div>
     </div>
+  </div>
 
-    <!-- Results Info -->
-    <div class="d-flex justify-content-between align-items-center mb-4 text-muted-custom small" 
-         *ngIf="!loading && products.length > 0">
-      <span *ngIf="searchQuery">Résultats pour "{{ searchQuery }}"</span>
-      <span>{{ totalProducts }} parfums</span>
+  <!-- Filtres compacts -->
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+    <!-- Catégories -->
+    <div class="dropdown">
+      <button 
+        class="btn btn-filter dropdown-toggle" 
+        type="button" 
+        id="categoryDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        {{ getCategoryDisplayName() }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+        <li *ngFor="let cat of categories">
+          <a class="dropdown-item" 
+             [class.active]="selectedCategory === cat.categoryId"
+             (click)="selectedCategory = cat.categoryId; onCategoryChange()">
+            {{ cat.displayName }}
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <!-- Loading State -->
-    <div class="text-center py-5" *ngIf="loading">
-      <div class="loading-spinner mx-auto mb-3"></div>
-      <p class="text-muted-custom">Chargement des parfums...</p>
+    <!-- Marque -->
+    <div class="dropdown">
+      <button 
+        class="btn btn-filter dropdown-toggle" 
+        type="button" 
+        id="brandDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        <span>🏷️</span> {{ selectedBrand || 'Marque' }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="brandDropdown">
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="!selectedBrand"
+             (click)="selectedBrand = ''; onFilterChange()">
+            Toutes les marques
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li *ngFor="let brand of availableBrands">
+          <a class="dropdown-item" 
+             [class.active]="selectedBrand === brand"
+             (click)="selectedBrand = brand; onFilterChange()">
+            {{ brand }}
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <!-- Error State -->
-    <div class="text-center py-5" *ngIf="error && !loading">
-      <p class="text-danger mb-3">{{ error }}</p>
-      <button class="btn btn-outline-primary" (click)="loadProducts()">Réessayer</button>
+    <!-- Note -->
+    <div class="dropdown">
+      <button 
+        class="btn btn-filter dropdown-toggle" 
+        type="button" 
+        id="ratingDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        <span>⭐</span> {{ getRatingDisplayName() }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="ratingDropdown">
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="minRating === null"
+             (click)="minRating = null; onFilterChange()">
+            Toutes les notes
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="minRating === 4"
+             (click)="minRating = 4; onFilterChange()">
+            4 étoiles et plus
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="minRating === 3"
+             (click)="minRating = 3; onFilterChange()">
+            3 étoiles et plus
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="minRating === 2"
+             (click)="minRating = 2; onFilterChange()">
+            2 étoiles et plus
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="minRating === 1"
+             (click)="minRating = 1; onFilterChange()">
+            1 étoile et plus
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <!-- Empty State -->
-    <div class="text-center py-5" *ngIf="!loading && !error && products.length === 0">
-      <p class="text-muted-custom mb-3">Aucun parfum trouvé</p>
-      <button class="btn btn-outline-primary" (click)="clearSearch()">Voir tous les parfums</button>
-    </div>
-
-    <!-- Products Grid -->
-    <div class="row g-4" *ngIf="!loading && products.length > 0">
-      <div class="col-6 col-md-4 col-lg-3" *ngFor="let product of products">
-        <div class="card product-card h-100" (click)="openProduct(product)">
-          
-          <!-- Badges -->
-          <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1" style="z-index: 2;">
-            <span class="badge bg-gold" *ngIf="product.currentSku.isNew">Nouveau</span>
-            <span class="badge bg-amber" *ngIf="product.currentSku.isSephoraExclusive">Exclusif</span>
-            <span class="badge" style="background: rgba(180, 80, 100, 0.9); color: #faf3e8;" 
-                  *ngIf="product.currentSku.isLimitedEdition">Édition Limitée</span>
-          </div>
-          
-          <!-- Favorite Button -->
-          <button class="favorite-btn" 
-                  [class.active]="isFavorite(product.productId)"
-                  (click)="toggleFavorite($event, product)"
-                  [title]="isFavorite(product.productId) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
+    <!-- Prix -->
+    <div class="dropdown">
+      <button 
+        class="btn btn-filter dropdown-toggle" 
+        type="button" 
+        id="priceDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        <span>💰</span> {{ getPriceDisplayName() }}
+      </button>
+      <div class="dropdown-menu p-3" aria-labelledby="priceDropdown" style="min-width: 250px;">
+        <div class="mb-2">
+          <label class="form-label small">Prix minimum</label>
+          <input 
+            type="number" 
+            class="form-control form-control-sm"
+            [(ngModel)]="minPrice"
+            (change)="onFilterChange()"
+            placeholder="Min"
+            min="0">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">Prix maximum</label>
+          <input 
+            type="number" 
+            class="form-control form-control-sm"
+            [(ngModel)]="maxPrice"
+            (change)="onFilterChange()"
+            placeholder="Max"
+            min="0">
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary flex-fill" (click)="minPrice = null; maxPrice = null; onFilterChange()">
+            Réinitialiser
           </button>
-          
-          <!-- Image -->
-          <div class="product-image">
-            <img [src]="product.heroImage" [alt]="product.displayName" loading="lazy" class="card-img-top">
-          </div>
-          
-          <!-- Info -->
-          <div class="card-body">
-            <p class="product-brand mb-1">{{ product.brandName }}</p>
-            <h5 class="product-name card-title">{{ product.displayName }}</h5>
-            
-            <!-- Rating -->
-            <div class="d-flex align-items-center gap-2 mb-2" *ngIf="product.rating">
-              <div class="stars">
-                <span *ngFor="let star of getStars(product.rating)" 
-                      class="star" 
-                      [class.full]="star === 'full'"
-                      [class.half]="star === 'half'">★</span>
-              </div>
-              <span class="text-gold-light small fw-semibold">{{ formatRating(product.rating) }}</span>
-              <span class="text-muted-custom small">({{ product.reviews }})</span>
-            </div>
-            
-            <!-- Price -->
-            <p class="product-price mb-0">{{ formatPrice(product.currentSku.listPrice) }}</p>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <nav class="mt-5" *ngIf="!loading && totalPages > 1">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <button class="page-link" (click)="prevPage()">‹</button>
+    <!-- Trier -->
+    <div class="dropdown">
+      <button 
+        class="btn btn-filter dropdown-toggle" 
+        type="button" 
+        id="sortDropdown" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        <span>⇅</span> {{ getSortDisplayName() }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="sortBy === 'none'"
+             (click)="sortBy = 'none'; onFilterChange()">
+            Aucun tri
+          </a>
         </li>
-        <li class="page-item" *ngFor="let page of getPageNumbers()" 
-            [class.active]="page === currentPage">
-          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="sortBy === 'price-asc'"
+             (click)="sortBy = 'price-asc'; onFilterChange()">
+            Prix croissant
+          </a>
         </li>
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <button class="page-link" (click)="nextPage()">›</button>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="sortBy === 'price-desc'"
+             (click)="sortBy = 'price-desc'; onFilterChange()">
+            Prix décroissant
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="sortBy === 'rating-desc'"
+             (click)="sortBy = 'rating-desc'; onFilterChange()">
+            Meilleure note
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" 
+             [class.active]="sortBy === 'reviews-desc'"
+             (click)="sortBy = 'reviews-desc'; onFilterChange()">
+            Plus de commentaires
+          </a>
         </li>
       </ul>
-    </nav>
+    </div>
 
+    <!-- Réinitialiser -->
+    <button 
+      class="btn btn-filter ms-auto" 
+      *ngIf="hasActiveFilters()" 
+      (click)="resetFilters()">
+      Réinitialiser
+    </button>
   </div>
+
+  <!-- Résultats -->
+  <div class="d-flex justify-content-between align-items-center mb-4" *ngIf="!loading && filteredProducts.length > 0">
+    <span *ngIf="searchQuery" class="text-muted-custom small">Résultats pour "{{ searchQuery }}"</span>
+    <span class="text-muted-custom small ms-auto">{{ filteredProducts.length }} parfum{{ filteredProducts.length > 1 ? 's' : '' }}</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="text-center py-5" *ngIf="loading">
+    <div class="spinner-border text-gold" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-3 text-muted-custom">Chargement des parfums...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div class="alert alert-danger text-center" *ngIf="error && !loading">
+    <p class="mb-3">{{ error }}</p>
+    <button class="btn btn-outline-primary" (click)="loadProducts()">Réessayer</button>
+  </div>
+
+  <!-- État vide -->
+  <div class="text-center py-5" *ngIf="!loading && !error && filteredProducts.length === 0">
+    <p class="text-muted-custom mb-3">Aucun parfum trouvé</p>
+    <button class="btn btn-outline-primary" (click)="resetFilters(); clearSearch()">
+      Réinitialiser les filtres
+    </button>
+  </div>
+
+  <!-- Grille de produits -->
+  <div class="row g-4 mb-5" *ngIf="!loading && filteredProducts.length > 0">
+    <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let product of getPaginatedProducts()">
+      <div class="card h-100 product-card" (click)="openProduct(product)">
+        <!-- Badges -->
+        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1" style="z-index: 2;">
+          <span class="badge bg-gold" *ngIf="product.currentSku.isNew">Nouveau</span>
+          <span class="badge bg-amber" *ngIf="product.currentSku.isSephoraExclusive">Exclusif</span>
+          <span class="badge" style="background: rgba(180, 80, 100, 0.9); color: var(--cream);" *ngIf="product.currentSku.isLimitedEdition">Édition Limitée</span>
+        </div>
+        
+        <!-- Bouton Favori -->
+        <button 
+          class="favorite-btn position-absolute top-0 end-0 m-2" 
+          [class.active]="isFavorite(product.productId)"
+          (click)="toggleFavorite($event, product)"
+          [title]="isFavorite(product.productId) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </button>
+        
+        <!-- Image -->
+        <div class="product-image">
+          <img [src]="product.heroImage" [alt]="product.displayName" class="card-img-top" loading="lazy">
+        </div>
+        
+        <!-- Info -->
+        <div class="card-body d-flex flex-column">
+          <p class="product-brand mb-1">{{ product.brandName }}</p>
+          <h6 class="card-title product-name mb-2">{{ product.displayName }}</h6>
+          
+          <!-- Rating -->
+          <div class="d-flex align-items-center gap-2 mb-2" *ngIf="product.rating">
+            <div class="stars">
+              <span *ngFor="let star of getStars(product.rating)" 
+                    class="star" 
+                    [class.full]="star === 'full'"
+                    [class.half]="star === 'half'">★</span>
+            </div>
+            <small class="text-gold fw-bold">{{ formatRating(product.rating) }}</small>
+            <small class="text-muted-custom">({{ product.reviews }})</small>
+          </div>
+          
+          <!-- Prix -->
+          <p class="product-price mt-auto mb-2">{{ formatPrice(product.currentSku.listPrice) }}</p>
+          
+          <!-- Bouton Disponibilité -->
+          <button 
+            class="btn btn-sm btn-availability w-100"
+            (click)="checkAvailability($event, product)"
+            title="Vérifier la disponibilité en magasin">
+            📍 Disponibilité en magasin
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <nav *ngIf="!loading && totalPages > 1 && filteredProducts.length > 0">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="prevPage(); $event.preventDefault()" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+        <a class="page-link" (click)="goToPage(page); $event.preventDefault()" href="#">{{ page }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="nextPage(); $event.preventDefault()" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>

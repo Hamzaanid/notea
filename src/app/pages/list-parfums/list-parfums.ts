@@ -1,17 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
-
 import { SephoraService, SephoraProduct, FilterCategory } from '../../services/sephora.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../core/auth/services/auth.services/auth.service';
+import { Subscription } from 'rxjs';
 
-/**
- * Composant catalogue de parfums
- * Affiche la liste des produits avec filtrage, recherche et pagination
- */
 @Component({
   selector: 'app-list-parfums',
   standalone: true,
@@ -21,129 +16,367 @@ import { AuthService } from '../../core/auth/services/auth.services/auth.service
 })
 export class ListParfums implements OnInit, OnDestroy {
   products: SephoraProduct[] = [];
+  filteredProducts: SephoraProduct[] = [];
   categories: FilterCategory[] = [];
   
+  // État
   loading = false;
   error = '';
   
   // Filtres
   selectedCategory = 'cat160006';
   searchQuery = '';
+  selectedBrand = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  minRating: number | null = null;
+  filterNew = false;
+  filterExclusive = false;
+  filterLimited = false;
+  sortBy: 'none' | 'price-asc' | 'price-desc' | 'rating-desc' | 'reviews-desc' = 'none';
+  
+  // Marques disponibles
+  availableBrands: string[] = [];
   
   // Pagination
   currentPage = 1;
-  pageSize = 24;
+  pageSize = 100;
   totalProducts = 0;
   totalPages = 0;
 
   // Favoris
   favorites: string[] = [];
   isLoggedIn = false;
-  
-  // Toast
+  private subscriptions: Subscription[] = [];
+
+  // Toast notification
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'success';
   showToast = false;
-  
-  private subscriptions: Subscription[] = [];
-  private toastTimeout: ReturnType<typeof setTimeout> | null = null;
+  private toastTimeout: any;
 
   constructor(
     private sephoraService: SephoraService,
     private favoritesService: FavoritesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.categories = this.sephoraService.categories;
     this.loadProducts();
-    this.subscribeToFavorites();
-    this.subscribeToAuth();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    if (this.toastTimeout) clearTimeout(this.toastTimeout);
-  }
-
-  private subscribeToFavorites(): void {
+    
+    // S'abonner aux IDs des favoris (pour vérification rapide)
     this.subscriptions.push(
-      this.favoritesService.favoritesIds$.subscribe(ids => this.favorites = ids)
+      this.favoritesService.favoritesIds$.subscribe(ids => {
+        this.favorites = ids;
+      })
+    );
+    
+    // S'abonner à l'état de connexion
+    this.subscriptions.push(
+      this.authService.isLoggedIn$.subscribe(isLogged => {
+        this.isLoggedIn = isLogged;
+      })
     );
   }
 
-  private subscribeToAuth(): void {
-    this.subscriptions.push(
-      this.authService.isLoggedIn$.subscribe(isLogged => this.isLoggedIn = isLogged)
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadProducts() {
+    this.loading = true;
+    this.error = '';
+
+    if (this.searchQuery.trim()) {
+      this.sephoraService.searchProducts(this.searchQuery, this.currentPage, this.pageSize)
+        .subscribe({
+          next: (response: any) => {
+            this.products = response.products || [];
+            this.extractBrands();
+            this.applyFilters();
+            this.totalProducts = this.filteredProducts.length;
+            this.calculateTotalPages();
+            this.loading = false;
+          },
+          error: () => {
+            this.error = 'Erreur lors de la recherche';
+            this.loading = false;
+          }
+        });
+    } else {
+      this.sephoraService.getProducts(this.selectedCategory, this.currentPage, this.pageSize)
+        .subscribe({
+          next: (response: any) => {
+            this.products = response.products || [];
+            this.extractBrands();
+            this.applyFilters();
+            this.totalProducts = this.filteredProducts.length;
+            this.calculateTotalPages();
+            this.loading = false;
+          },
+          error: () => {
+            this.error = 'Erreur lors du chargement';
+            this.loading = false;
+          }
+        });
+    }
+  }
+
+  calculateTotalPages() {
+    this.totalPages = Math.ceil(this.filteredProducts.length / this.pageSize);
+  }
+
+  // ========== FILTRES AVANCÉS ==========
+
+  /**
+   * Extrait les marques uniques des produits
+   */
+  extractBrands() {
+    const brands = new Set<string>();
+    this.products.forEach(product => {
+      if (product.brandName) {
+        brands.add(product.brandName);
+      }
+    });
+    this.availableBrands = Array.from(brands).sort();
+  }
+
+  /**
+   * Parse le prix depuis une chaîne (ex: "$125.00" -> 125)
+   */
+  parsePrice(priceStr: string | undefined): number {
+    if (!priceStr) return 0;
+    const match = priceStr.match(/[\d.]+/);
+    return match ? parseFloat(match[0]) : 0;
+  }
+
+  /**
+   * Applique tous les filtres et le tri
+   */
+  applyFilters() {
+    let filtered = [...this.products];
+
+    // Filtre par marque
+    if (this.selectedBrand) {
+      filtered = filtered.filter(p => p.brandName === this.selectedBrand);
+    }
+
+    // Filtre par prix
+    if (this.minPrice !== null) {
+      filtered = filtered.filter(p => {
+        const price = this.parsePrice(p.currentSku?.listPrice);
+        return price >= this.minPrice!;
+      });
+    }
+    if (this.maxPrice !== null) {
+      filtered = filtered.filter(p => {
+        const price = this.parsePrice(p.currentSku?.listPrice);
+        return price <= this.maxPrice!;
+      });
+    }
+
+    // Filtre par note minimale
+    if (this.minRating !== null) {
+      filtered = filtered.filter(p => {
+        const rating = parseFloat(p.rating) || 0;
+        return rating >= this.minRating!;
+      });
+    }
+
+    // Filtre par badges
+    if (this.filterNew) {
+      filtered = filtered.filter(p => p.currentSku?.isNew === true);
+    }
+    if (this.filterExclusive) {
+      filtered = filtered.filter(p => p.currentSku?.isSephoraExclusive === true);
+    }
+    if (this.filterLimited) {
+      filtered = filtered.filter(p => p.currentSku?.isLimitedEdition === true);
+    }
+
+    // Tri
+    filtered = this.sortProducts(filtered);
+
+    this.filteredProducts = filtered;
+    this.currentPage = 1; // Reset à la première page après filtrage
+  }
+
+  /**
+   * Trie les produits selon le critère sélectionné
+   */
+  sortProducts(products: SephoraProduct[]): SephoraProduct[] {
+    const sorted = [...products];
+
+    switch (this.sortBy) {
+      case 'price-asc':
+        return sorted.sort((a, b) => {
+          const priceA = this.parsePrice(a.currentSku?.listPrice);
+          const priceB = this.parsePrice(b.currentSku?.listPrice);
+          return priceA - priceB;
+        });
+
+      case 'price-desc':
+        return sorted.sort((a, b) => {
+          const priceA = this.parsePrice(a.currentSku?.listPrice);
+          const priceB = this.parsePrice(b.currentSku?.listPrice);
+          return priceB - priceA;
+        });
+
+      case 'rating-desc':
+        return sorted.sort((a, b) => {
+          const ratingA = parseFloat(a.rating) || 0;
+          const ratingB = parseFloat(b.rating) || 0;
+          return ratingB - ratingA;
+        });
+
+      case 'reviews-desc':
+        return sorted.sort((a, b) => {
+          const reviewsA = parseInt(a.reviews) || 0;
+          const reviewsB = parseInt(b.reviews) || 0;
+          return reviewsB - reviewsA;
+        });
+
+      default:
+        return sorted;
+    }
+  }
+
+  /**
+   * Réinitialise tous les filtres
+   */
+  resetFilters() {
+    this.selectedBrand = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.minRating = null;
+    this.filterNew = false;
+    this.filterExclusive = false;
+    this.filterLimited = false;
+    this.sortBy = 'none';
+    this.applyFilters();
+  }
+
+  /**
+   * Vérifie si des filtres sont actifs
+   */
+  hasActiveFilters(): boolean {
+    return !!(
+      this.selectedBrand ||
+      this.minPrice !== null ||
+      this.maxPrice !== null ||
+      this.minRating !== null ||
+      this.filterNew ||
+      this.filterExclusive ||
+      this.filterLimited ||
+      this.sortBy !== 'none'
     );
   }
 
   /**
-   * Charge les produits selon la catégorie ou la recherche
+   * Retourne le nom d'affichage de la catégorie sélectionnée
    */
-  loadProducts(): void {
-    this.loading = true;
-    this.error = '';
-
-    const request = this.searchQuery.trim()
-      ? this.sephoraService.searchProducts(this.searchQuery, this.currentPage, this.pageSize)
-      : this.sephoraService.getProducts(this.selectedCategory, this.currentPage, this.pageSize);
-
-    request.subscribe({
-      next: (response: any) => {
-        this.products = response.products || [];
-        this.totalProducts = this.searchQuery.trim() 
-          ? (this.products.length > 0 ? 500 : 0)
-          : this.sephoraService.getTotalForCategory(this.selectedCategory);
-        this.calculateTotalPages();
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Erreur lors du chargement';
-        this.loading = false;
-      }
-    });
+  getCategoryDisplayName(): string {
+    const cat = this.categories.find(c => c.categoryId === this.selectedCategory);
+    return cat ? cat.displayName : 'Tous';
   }
 
-  private calculateTotalPages(): void {
-    this.totalPages = Math.ceil(this.totalProducts / this.pageSize);
+  /**
+   * Retourne le nom d'affichage de la note sélectionnée
+   */
+  getRatingDisplayName(): string {
+    if (this.minRating === null) return 'Note';
+    return `${this.minRating}+ étoiles`;
   }
 
-  onCategoryChange(): void {
+  /**
+   * Retourne le nom d'affichage du prix sélectionné
+   */
+  getPriceDisplayName(): string {
+    if (this.minPrice === null && this.maxPrice === null) return 'Prix';
+    if (this.minPrice !== null && this.maxPrice !== null) {
+      return `${this.minPrice}€ - ${this.maxPrice}€`;
+    }
+    if (this.minPrice !== null) return `À partir de ${this.minPrice}€`;
+    if (this.maxPrice !== null) return `Jusqu'à ${this.maxPrice}€`;
+    return 'Prix';
+  }
+
+  /**
+   * Retourne le nom d'affichage du tri sélectionné
+   */
+  getSortDisplayName(): string {
+    switch (this.sortBy) {
+      case 'price-asc': return 'Prix croissant';
+      case 'price-desc': return 'Prix décroissant';
+      case 'rating-desc': return 'Meilleure note';
+      case 'reviews-desc': return 'Plus de commentaires';
+      default: return 'Trier';
+    }
+  }
+
+  /**
+   * Retourne le nombre de badges actifs
+   */
+  getActiveBadgesCount(): number {
+    let count = 0;
+    if (this.filterNew) count++;
+    if (this.filterExclusive) count++;
+    if (this.filterLimited) count++;
+    return count;
+  }
+
+  onCategoryChange() {
     this.currentPage = 1;
     this.searchQuery = '';
+    this.resetFilters();
     this.loadProducts();
   }
 
-  onSearch(): void {
+  onFilterChange() {
+    this.applyFilters();
+  }
+
+  onSearch() {
     this.currentPage = 1;
     this.loadProducts();
   }
 
-  clearSearch(): void {
+  clearSearch() {
     this.searchQuery = '';
     this.currentPage = 1;
     this.loadProducts();
   }
 
-  goToPage(page: number): void {
+  goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
-      this.loadProducts();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
-  prevPage(): void {
+  /**
+   * Récupère les produits paginés pour la page actuelle
+   */
+  getPaginatedProducts(): SephoraProduct[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredProducts.slice(start, end);
+  }
+
+  prevPage() {
     this.goToPage(this.currentPage - 1);
   }
 
-  nextPage(): void {
+  nextPage() {
     this.goToPage(this.currentPage + 1);
   }
 
   getPageNumbers(): number[] {
+    const pages: number[] = [];
     const maxVisible = 5;
+    
     let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
     let end = Math.min(this.totalPages, start + maxVisible - 1);
     
@@ -151,7 +384,11 @@ export class ListParfums implements OnInit, OnDestroy {
       start = Math.max(1, end - maxVisible + 1);
     }
     
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
   }
 
   formatPrice(price: string | undefined): string {
@@ -165,23 +402,41 @@ export class ListParfums implements OnInit, OnDestroy {
 
   getStars(rating: string): string[] {
     const num = parseFloat(rating) || 0;
-    return [1, 2, 3, 4, 5].map(i => {
-      if (i <= Math.floor(num)) return 'full';
-      if (i - 0.5 <= num) return 'half';
-      return 'empty';
-    });
+    const stars: string[] = [];
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= Math.floor(num)) {
+        stars.push('full');
+      } else if (i - 0.5 <= num) {
+        stars.push('half');
+      } else {
+        stars.push('empty');
+      }
+    }
+    
+    return stars;
   }
 
-  openProduct(product: SephoraProduct): void {
-    window.open(`https://www.sephora.com${product.targetUrl}`, '_blank');
+  openProduct(product: SephoraProduct) {
+    const url = `https://www.sephora.com${product.targetUrl}`;
+    window.open(url, '_blank');
   }
 
+  // ========== FAVORIS ==========
+  
+  /**
+   * Vérifie si un produit est en favori
+   */
   isFavorite(productId: string): boolean {
     return this.favorites.includes(productId);
   }
 
-  async toggleFavorite(event: Event, product: SephoraProduct): Promise<void> {
-    event.stopPropagation();
+  /**
+   * Toggle le favori (ajouter/retirer)
+   * Envoie TOUTES les infos du produit pour stockage complet
+   */
+  async toggleFavorite(event: Event, product: SephoraProduct) {
+    event.stopPropagation(); // Empêche l'ouverture du produit
     
     if (!this.isLoggedIn) {
       this.displayToast('Veuillez vous connecter pour ajouter des favoris', 'info');
@@ -189,6 +444,7 @@ export class ListParfums implements OnInit, OnDestroy {
     }
 
     try {
+      // Préparer toutes les infos du produit pour le stockage
       const productData = {
         productId: product.productId,
         skuId: product.skuId || product.currentSku?.skuId || product.productId,
@@ -207,26 +463,54 @@ export class ListParfums implements OnInit, OnDestroy {
       
       const wasAdded = await this.favoritesService.toggleFavorite(productData);
       
-      this.displayToast(
-        wasAdded ? `${product.brandName} ajouté aux favoris ♥` : `${product.brandName} retiré des favoris`,
-        wasAdded ? 'success' : 'info'
-      );
+      if (wasAdded) {
+        this.displayToast(`${product.brandName} ajouté aux favoris ♥`, 'success');
+      } else {
+        this.displayToast(`${product.brandName} retiré des favoris`, 'info');
+      }
     } catch (error) {
+      console.error('Erreur lors de la modification du favori:', error);
       this.displayToast('Erreur lors de la modification du favori', 'error');
     }
   }
 
-  displayToast(message: string, type: 'success' | 'error' | 'info' = 'success'): void {
-    if (this.toastTimeout) clearTimeout(this.toastTimeout);
+  // ========== TOAST NOTIFICATION ==========
+
+  /**
+   * Affiche un toast de notification
+   */
+  displayToast(message: string, type: 'success' | 'error' | 'info' = 'success') {
+    // Clear any existing timeout
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
     
     this.toastMessage = message;
     this.toastType = type;
     this.showToast = true;
     
-    this.toastTimeout = setTimeout(() => this.hideToast(), 3000);
+    // Auto-hide after 3 seconds
+    this.toastTimeout = setTimeout(() => {
+      this.hideToast();
+    }, 3000);
   }
 
-  hideToast(): void {
+  /**
+   * Cache le toast
+   */
+  hideToast() {
     this.showToast = false;
+  }
+
+  /**
+   * Vérifie la disponibilité d'un produit en magasin
+   * Redirige vers la page boutiques avec le produit sélectionné
+   */
+  checkAvailability(event: Event, product: SephoraProduct) {
+    event.stopPropagation();
+    const productJson = encodeURIComponent(JSON.stringify(product));
+    this.router.navigate(['/boutiques'], { 
+      queryParams: { product: productJson } 
+    });
   }
 }

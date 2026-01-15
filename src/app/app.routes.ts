@@ -10,11 +10,8 @@ import { Boutiques } from './pages/boutiques/boutiques';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LayoutComponent } from './core/layout/layout/layout';
 
-/**
- * Configuration des routes de l'application Nôtéa
- */
 export const routes: Routes = [
-  // Redirection racine vers home
+  // Redirection racine → home
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   
   // Pages publiques (avec layout)
@@ -25,11 +22,12 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'ListParfums', component: ListParfums }
+      { path: 'ListParfums', component: ListParfums },
+      { path: 'boutiques', component: Boutiques },
     ]
   },
   
-  // Pages protégées (authentification requise)
+  // Pages protégées (après connexion)
   {
     path: '',
     component: LayoutComponent,
@@ -38,10 +36,9 @@ export const routes: Routes = [
       { path: 'test-personnalite', component: TestPerso },
       { path: 'profile', component: Profile },
       { path: 'Favoris', component: Favoris },
-      { path: 'boutiques', component: Boutiques }
     ]
   },
 
-  // Redirection par défaut (404 → home)
+  // Route par défaut (404 → home)
   { path: '**', redirectTo: 'home' }
 ];

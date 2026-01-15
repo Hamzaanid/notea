@@ -1,147 +1,188 @@
-<!-- Page Boutiques - Nôtéa -->
-<div class="boutiques-page py-5">
-  <div class="container">
-    
-    <!-- Header -->
-    <div class="text-center mb-5">
-      <h1 class="h2 font-heading text-gold-light mb-2" style="letter-spacing: 2px;">Nos Boutiques</h1>
-      <p class="text-muted-custom">Trouvez les parfumeries près de chez vous</p>
+<div class="boutiques">
+  
+  <!-- Header Section -->
+  <section class="boutiques-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        {{ mode === 'availability' ? 'Disponibilité en magasin' : 'Magasins Sephora' }}
+      </h1>
+      <p class="page-subtitle">
+        {{ mode === 'availability' ? 'Trouvez ce produit près de chez vous' : 'Trouvez les magasins Sephora aux États-Unis' }}
+      </p>
     </div>
 
-    <!-- Search Section -->
-    <div class="mb-5">
+    <!-- Produit sélectionné (mode availability) -->
+    <div class="selected-product" *ngIf="mode === 'availability' && selectedProduct">
+      <div class="product-info">
+        <span class="product-brand">{{ selectedProduct.brandName }}</span>
+        <span class="product-name">{{ selectedProduct.displayName }}</span>
+        <span class="product-sku" *ngIf="skuIdUsed">SKU: {{ skuIdUsed }}</span>
+      </div>
+      <button class="back-btn" (click)="goToCatalogue()">
+        ← Retour au catalogue
+      </button>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="search-section">
+
+    <!-- Sélection de ville US -->
+    <div class="city-selector">
+      <label class="filter-label">📍 Choisir une ville</label>
+      <select class="filter-select city-select" [(ngModel)]="selectedUSCity" (change)="onCityChange()">
+        <option *ngFor="let city of usCities" [value]="city.name + ', ' + city.state">
+          {{ city.name }}, {{ city.state }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-container">
       
-      <!-- Geolocation Button -->
-      <button class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2" 
-              (click)="searchNearby()" 
-              [disabled]="loading || locationLoading">
-        <span style="font-size: 1.2rem;">📍</span>
-        <span *ngIf="!locationLoading">Autour de moi</span>
-        <span *ngIf="locationLoading" class="d-flex align-items-center gap-2">
-          <span class="spinner-border spinner-border-sm"></span>
-          Localisation...
-        </span>
+      <!-- Radius filter -->
+      <div class="filter-group">
+        <label class="filter-label">Rayon</label>
+        <select class="filter-select" [(ngModel)]="searchRadius" (change)="onRadiusChange()">
+          <option [value]="10">~15 km</option>
+          <option [value]="25">~40 km</option>
+          <option [value]="50">~80 km</option>
+          <option [value]="100">~160 km</option>
+        </select>
+      </div>
+
+      <!-- City filter (from results) -->
+      <div class="filter-group" *ngIf="availableCities.length > 1">
+        <label class="filter-label">Quartier</label>
+        <select class="filter-select" [(ngModel)]="selectedStoreCity" (change)="applyFilters()">
+          <option value="">Tous</option>
+          <option *ngFor="let city of availableCities" [value]="city">{{ city }}</option>
+        </select>
+      </div>
+
+      <!-- Store type filter -->
+      <div class="filter-group">
+        <label class="filter-label">Type</label>
+        <select class="filter-select" [(ngModel)]="selectedStoreType" (change)="applyFilters()">
+          <option value="">Tous</option>
+          <option value="SEPHORA">Sephora</option>
+          <option value="SIKLS">Sephora @ Kohl's</option>
+        </select>
+      </div>
+
+      <!-- Reset button -->
+      <button class="reset-btn" (click)="resetFilters()" *ngIf="selectedStoreCity || selectedStoreType">
+        Réinitialiser
       </button>
 
-      <!-- Filters -->
-      <div class="row g-3">
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loader"></div>
+    <p class="loading-text">Chargement des magasins...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-container" *ngIf="error && !loading">
+    <p class="error-text">{{ error }}</p>
+    <button class="back-btn" (click)="goToCatalogue()" *ngIf="mode === 'availability'">
+      Retour au catalogue
+    </button>
+  </div>
+
+  <!-- Results -->
+  <section class="results-section" *ngIf="!loading && filteredStores.length > 0">
+    <p class="results-count">
+      {{ filteredStores.length }} magasin{{ filteredStores.length > 1 ? 's' : '' }}
+      <span *ngIf="mode === 'availability'"> avec ce produit en stock</span>
+      <span> à {{ selectedUSCity }}</span>
+    </p>
+
+    <div class="stores-grid">
+      <div class="store-card" *ngFor="let store of filteredStores" [class.out-of-stock]="store.availabilityStatus === 'Out of Stock'">
         
-        <!-- City Filter -->
-        <div class="col-12 col-md-5">
-          <label class="form-label">Ville</label>
-          <select class="form-select" [(ngModel)]="selectedCity" (change)="applyFilters()">
-            <option value="">Toutes les villes</option>
-            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
-          </select>
+        <div class="store-header">
+          <div class="store-info">
+            <h3 class="store-name">{{ store.displayName }}</h3>
+            <span class="store-type" [class.sikls]="store.storeType === 'SIKLS'">
+              {{ getStoreTypeLabel(store.storeType) }}
+            </span>
+          </div>
+          <span class="store-distance" *ngIf="store.distance">
+            {{ formatDistance(store.distance) }}
+          </span>
         </div>
 
-        <!-- Brand Filter -->
-        <div class="col-12 col-md-5">
-          <label class="form-label">Marque</label>
-          <select class="form-select" [(ngModel)]="selectedBrand" (change)="applyFilters()">
-            <option value="">Toutes les marques</option>
-            <option *ngFor="let brand of brands" [value]="brand">{{ brand }}</option>
-          </select>
+        <!-- Disponibilité (mode availability) -->
+        <div class="availability-badge" *ngIf="mode === 'availability'" [ngClass]="getAvailabilityClass(store)">
+          <span *ngIf="store.availabilityStatus === 'In Stock'">
+            ✓ En stock
+            <span class="stock-count" *ngIf="store.inStoreAvailability">({{ store.inStoreAvailability }} dispo)</span>
+          </span>
+          <span *ngIf="store.availabilityStatus === 'Out of Stock'">✗ Rupture</span>
+          <span *ngIf="!store.availabilityStatus">✓ Disponible</span>
         </div>
 
-        <!-- Reset Button -->
-        <div class="col-12 col-md-2 d-flex align-items-end">
-          <button class="btn btn-outline-secondary w-100" 
-                  (click)="resetFilters()" 
-                  *ngIf="selectedCity || selectedBrand || searchMode === 'nearby'">
-            Réinitialiser
+        <div class="store-details">
+          <p class="store-address">
+            <span class="detail-icon">📍</span>
+            {{ getFullAddress(store) }}
+          </p>
+          
+          <p class="store-hours">
+            <span class="detail-icon">🕐</span>
+            {{ getTodayHours(store) }}
+          </p>
+          
+          <p class="store-phone" *ngIf="store.phone">
+            <span class="detail-icon">📞</span>
+            {{ formatPhone(store.phone) }}
+          </p>
+
+          <p class="store-mall" *ngIf="store.mallName">
+            <span class="detail-icon">🏬</span>
+            {{ store.mallName }}
+          </p>
+        </div>
+
+        <!-- Services disponibles -->
+        <div class="store-services" *ngIf="hasServices(store)">
+          <span class="service-badge" *ngIf="store.isBopisable" title="Retrait en magasin">
+            🛍️ Retrait
+          </span>
+          <span class="service-badge" *ngIf="store.isCurbsideEnabled" title="Curbside">
+            🚗 Curbside
+          </span>
+          <span class="service-badge" *ngIf="store.samedayDeliveryEnabled" title="Livraison jour même">
+            ⚡ Express
+          </span>
+          <span class="service-badge" *ngIf="store.isOnlineReservationEnabled" title="Réservation">
+            📅 Réserv.
+          </span>
+        </div>
+
+        <div class="store-actions">
+          <button class="action-btn primary" (click)="openMaps(store)">
+            🗺️ Itinéraire
+          </button>
+          
+          <button class="action-btn" (click)="callPhone(store.phone)" *ngIf="store.phone">
+            📞
           </button>
         </div>
 
       </div>
     </div>
+  </section>
 
-    <!-- Loading State -->
-    <div class="text-center py-5" *ngIf="loading">
-      <div class="loading-spinner mx-auto mb-3"></div>
-      <p class="text-muted-custom">Chargement des boutiques...</p>
-    </div>
-
-    <!-- Error State -->
-    <div class="text-center py-5" *ngIf="error && !loading">
-      <p class="text-danger">{{ error }}</p>
-    </div>
-
-    <!-- Results -->
-    <div *ngIf="!loading && filteredBoutiques.length > 0">
-      
-      <!-- Results Count -->
-      <p class="text-muted-custom small mb-4">
-        {{ filteredBoutiques.length }} boutique{{ filteredBoutiques.length > 1 ? 's' : '' }}
-        <span *ngIf="selectedCity"> à {{ selectedCity }}</span>
-        <span *ngIf="searchMode === 'nearby'"> près de vous</span>
-      </p>
-
-      <!-- Stores Grid -->
-      <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4" *ngFor="let boutique of filteredBoutiques">
-          <div class="card h-100 store-card">
-            <div class="card-body">
-              
-              <!-- Header -->
-              <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom border-gold-subtle">
-                <div>
-                  <h5 class="card-title font-heading text-cream mb-1" style="font-size: 1.1rem;">
-                    {{ boutique.name }}
-                  </h5>
-                  <span class="text-gold small">{{ boutique.brand }}</span>
-                </div>
-                <span class="badge bg-amber" *ngIf="boutique.distance">
-                  {{ formatDistance(boutique.distance) }}
-                </span>
-              </div>
-              
-              <!-- Details -->
-              <div class="mb-3">
-                <p class="d-flex align-items-start gap-2 text-muted-custom small mb-2">
-                  <span>📍</span>
-                  <span>{{ boutique.address }}, {{ boutique.postalCode }} {{ boutique.city }}</span>
-                </p>
-                <p class="d-flex align-items-start gap-2 text-muted-custom small mb-2" *ngIf="boutique.openingHours">
-                  <span>🕐</span>
-                  <span>{{ boutique.openingHours }}</span>
-                </p>
-                <p class="d-flex align-items-start gap-2 text-muted-custom small mb-0" *ngIf="boutique.phone">
-                  <span>📞</span>
-                  <span>{{ boutique.phone }}</span>
-                </p>
-              </div>
-              
-              <!-- Actions -->
-              <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-outline-primary btn-sm flex-grow-1" (click)="openMaps(boutique)">
-                  🗺️ Itinéraire
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" 
-                        (click)="callPhone(boutique.phone)" 
-                        *ngIf="boutique.phone">
-                  📞
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" 
-                        (click)="openWebsite(boutique.website)" 
-                        *ngIf="boutique.website">
-                  🌐
-                </button>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div class="text-center py-5" *ngIf="!loading && !error && filteredBoutiques.length === 0">
-      <p class="text-muted-custom mb-3">Aucune boutique trouvée avec ces critères</p>
-      <button class="btn btn-outline-primary" (click)="resetFilters()">
-        Voir toutes les boutiques
-      </button>
-    </div>
-
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!loading && !error && filteredStores.length === 0 && stores.length > 0">
+    <p>Aucun magasin trouvé avec ces filtres</p>
+    <button class="reset-btn" (click)="resetFilters()">
+      Voir tous les magasins
+    </button>
   </div>
+
 </div>
