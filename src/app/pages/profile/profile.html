@@ -1,29 +1,219 @@
 <!-- Page Profil - Nôtéa -->
-<div class="profile-page py-5">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 text-center">
-        
-        <h1 class="h2 font-heading text-gold-light mb-3" style="letter-spacing: 2px;">
-          Mon Profil
-        </h1>
-        <p class="text-muted-custom mb-5">
-          Gérez vos informations et préférences
-        </p>
-        
-        <!-- Placeholder pour le profil -->
-        <div class="card bg-transparent-dark border-gold-subtle p-5">
-          <div class="display-1 mb-4 opacity-50">👤</div>
-          <h3 class="h5 font-heading text-gold-light mb-3">Section en développement</h3>
-          <p class="text-muted-custom mb-4">
-            Bientôt, vous pourrez personnaliser votre profil et gérer vos préférences olfactives.
-          </p>
-          <a routerLink="/Favoris" class="btn btn-outline-primary">
-            Voir mes favoris
-          </a>
+<div class="profile-page">
+  <div class="profile-container">
+    
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="header-content">
+        <div class="avatar-section">
+          <div class="avatar">
+            <span class="avatar-initials">{{ (profile.firstName || '').charAt(0) || 'N' }}{{ (profile.lastName || '').charAt(0) || 'O' }}</span>
+          </div>
+          <div class="user-info">
+            <h1 class="user-name" *ngIf="profile.firstName || profile.lastName">
+              {{ profile.firstName }} {{ profile.lastName }}
+            </h1>
+            <h1 class="user-name" *ngIf="!profile.firstName && !profile.lastName">
+              Mon Profil
+            </h1>
+            <p class="user-email">{{ userEmail }}</p>
+          </div>
         </div>
         
+        <div class="header-actions">
+          <button class="btn-edit" *ngIf="!isEditing" (click)="startEditing()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Modifier
+          </button>
+        </div>
       </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-container" *ngIf="successMessage || errorMessage">
+      <div class="alert alert-success" *ngIf="successMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        {{ successMessage }}
+      </div>
+      <div class="alert alert-error" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <!-- Chargement -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement du profil...</p>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="profile-content" *ngIf="!loading">
+      
+      <!-- Section Informations personnelles -->
+      <div class="profile-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h2 class="section-title">Informations personnelles</h2>
+        </div>
+        
+        <div class="section-content">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">
+                Prénom
+                <span class="required" *ngIf="isEditing">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="profile.firstName"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+                placeholder="Votre prénom"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">
+                Nom
+                <span class="required" *ngIf="isEditing">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="profile.lastName"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+                placeholder="Votre nom"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Date de naissance</label>
+              <input 
+                type="date" 
+                class="form-input" 
+                [(ngModel)]="profile.dateOfBirth"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-input disabled" 
+                [value]="userEmail"
+                disabled
+              />
+              <span class="form-hint">L'email ne peut pas être modifié</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Adresse -->
+      <div class="profile-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <h2 class="section-title">Adresse</h2>
+        </div>
+        
+        <div class="section-content">
+          <div class="form-grid full-width">
+            <div class="form-group span-2">
+              <label class="form-label">Voie / Rue</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="profile.address.street"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+                placeholder="123 Avenue des Champs-Élysées"
+              />
+            </div>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">
+                Ville
+                <span class="required" *ngIf="isEditing">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="profile.address.city"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+                placeholder="Paris"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">
+                Code postal
+                <span class="required" *ngIf="isEditing">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="profile.address.postalCode"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+                placeholder="75008"
+                maxlength="10"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Pays</label>
+              <select 
+                class="form-input form-select" 
+                [(ngModel)]="profile.address.country"
+                [disabled]="!isEditing"
+                [class.disabled]="!isEditing"
+              >
+                <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="profile-actions" *ngIf="isEditing">
+        <button class="btn-cancel" (click)="cancelEditing()" [disabled]="saving">
+          Annuler
+        </button>
+        <button class="btn-save" (click)="saveProfile()" [disabled]="saving">
+          <span class="spinner-small" *ngIf="saving"></span>
+          {{ saving ? 'Enregistrement...' : 'Sauvegarder les modifications' }}
+        </button>
+      </div>
+      
     </div>
   </div>
 </div>

@@ -23,7 +23,6 @@ export const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'ListParfums', component: ListParfums },
-      { path: 'boutiques', component: Boutiques },
     ]
   },
   
@@ -36,6 +35,7 @@ export const routes: Routes = [
       { path: 'test-personnalite', component: TestPerso },
       { path: 'profile', component: Profile },
       { path: 'Favoris', component: Favoris },
+      { path: 'boutiques', component: Boutiques },
     ]
   },
 

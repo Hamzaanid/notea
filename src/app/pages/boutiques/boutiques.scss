@@ -8,8 +8,8 @@ $amber-deep: #2d1810;
 
 .boutiques {
   min-height: 100vh;
-  padding: 120px 2rem 4rem;
-  max-width: 1400px;
+  padding: 100px 1.5rem 2rem;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -18,89 +18,24 @@ $amber-deep: #2d1810;
    ======================================== */
 
 .boutiques-header {
-  margin-bottom: 2.5rem;
-}
-
-.header-content {
   text-align: center;
   margin-bottom: 1.5rem;
 }
 
 .page-title {
   font-family: 'Cinzel', 'Georgia', serif;
-  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 500;
   color: $gold-light;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   letter-spacing: 2px;
 }
 
 .page-subtitle {
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   color: rgba($cream, 0.6);
-}
-
-/* Selected Product (mode availability) */
-.selected-product {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1.25rem;
-  background: rgba($gold, 0.08);
-  border: 1px solid rgba($gold, 0.15);
-  border-radius: 4px;
-}
-
-.product-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.product-brand {
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: $gold;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.product-name {
-  font-family: 'Cinzel', 'Georgia', serif;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: $cream;
-}
-
-.product-sku {
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: rgba($cream, 0.5);
-  margin-top: 0.25rem;
-}
-
-.back-btn {
-  padding: 0.6rem 1rem;
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: rgba($cream, 0.7);
-  background: transparent;
-  border: 1px solid rgba($gold, 0.2);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: $gold;
-    color: $gold;
-  }
 }
 
 /* ========================================
@@ -108,31 +43,19 @@ $amber-deep: #2d1810;
    ======================================== */
 
 .search-section {
-  margin-bottom: 2.5rem;
-}
-
-/* City Selector */
-.city-selector {
   margin-bottom: 1.5rem;
-  
-  .city-select {
-    font-size: 1.1rem;
-    padding: 1rem 1.25rem;
-    background: rgba($gold, 0.08);
-    border-color: rgba($gold, 0.3);
-  }
 }
 
 .geo-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   width: 100%;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1rem;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: $amber-dark;
   background: $gold-light;
@@ -152,38 +75,38 @@ $amber-deep: #2d1810;
   }
   
   .geo-icon {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 }
 
 .filters-container {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
   align-items: flex-end;
 }
 
 .filter-group {
   flex: 1;
-  min-width: 150px;
+  min-width: 160px;
 }
 
 .filter-label {
   display: block;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba($cream, 0.6);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .filter-select {
   width: 100%;
-  padding: 0.875rem 1rem;
+  padding: 0.65rem 0.85rem;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 400;
   color: $cream;
   background: rgba(255, 255, 255, 0.05);
@@ -204,9 +127,9 @@ $amber-deep: #2d1810;
 }
 
 .reset-btn {
-  padding: 0.875rem 1.25rem;
+  padding: 0.65rem 1rem;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: rgba($cream, 0.7);
   background: transparent;
@@ -230,13 +153,13 @@ $amber-deep: #2d1810;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  padding: 4rem 2rem;
+  gap: 1rem;
+  padding: 2rem 1rem;
 }
 
 .loader {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: 2px solid rgba($gold, 0.2);
   border-top-color: $gold;
   border-radius: 50%;
@@ -249,7 +172,7 @@ $amber-deep: #2d1810;
 
 .loading-text {
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 400;
   color: rgba($cream, 0.6);
 }
@@ -257,14 +180,14 @@ $amber-deep: #2d1810;
 .error-container,
 .empty-state {
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 2rem 1rem;
   
   p {
     font-family: 'Cormorant', 'Georgia', serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 400;
     color: rgba($cream, 0.6);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
 }
 
@@ -277,21 +200,21 @@ $amber-deep: #2d1810;
    ======================================== */
 
 .results-section {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 .results-count {
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: rgba($cream, 0.5);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .stores-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 /* Store Card */
@@ -299,31 +222,27 @@ $amber-deep: #2d1810;
   background: rgba($amber-deep, 0.4);
   border: 1px solid rgba($gold, 0.1);
   border-radius: 4px;
-  padding: 1.5rem;
+  padding: 1rem 1.25rem;
   transition: all 0.3s ease;
   
   &:hover {
     border-color: rgba($gold, 0.25);
     transform: translateY(-2px);
   }
-  
-  &.out-of-stock {
-    opacity: 0.6;
-    
-    .store-name {
-      color: rgba($cream, 0.5);
-    }
-  }
 }
 
 .store-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.875rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid rgba($gold, 0.08);
+}
+
+.store-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .store-info {
@@ -333,130 +252,70 @@ $amber-deep: #2d1810;
 
 .store-name {
   font-family: 'Cinzel', 'Georgia', serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
   color: $cream;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.15rem;
   line-height: 1.3;
   letter-spacing: 0.5px;
 }
 
-.store-type {
-  display: inline-block;
+.store-brand {
   font-family: 'Cormorant', 'Georgia', serif;
   font-size: 0.8rem;
   font-weight: 500;
   color: $gold;
-  background: rgba($gold, 0.1);
-  padding: 0.2rem 0.5rem;
-  border-radius: 2px;
-  letter-spacing: 0.5px;
-  
-  &.sikls {
-    background: rgba(#8e44ad, 0.2);
-    color: #bb8fce;
-  }
+  letter-spacing: 1px;
 }
 
 .store-distance {
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: $gold-light;
-  background: rgba($gold, 0.12);
-  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba($gold-light, 0.7);
+  background: rgba($gold, 0.1);
+  padding: 0.2rem 0.5rem;
   border-radius: 2px;
   white-space: nowrap;
 }
 
-/* Availability Badge */
-.availability-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 3px;
-  margin-bottom: 1rem;
-  
-  &.in-stock {
-    background: rgba(#27ae60, 0.15);
-    color: #58d68d;
-    border: 1px solid rgba(#27ae60, 0.3);
-  }
-  
-  &.out-of-stock {
-    background: rgba(#e74c3c, 0.15);
-    color: #ec7063;
-    border: 1px solid rgba(#e74c3c, 0.3);
-  }
-  
-  .stock-count {
-    font-size: 0.8rem;
-    font-weight: 400;
-    opacity: 0.8;
-  }
-}
-
 .store-details {
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .store-address,
 .store-hours,
-.store-phone,
-.store-mall {
+.store-phone {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 0.4rem;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: rgba($cream, 0.7);
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
+  margin-bottom: 0.3rem;
+  line-height: 1.35;
 }
 
 .detail-icon {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
   margin-top: 0.1rem;
-}
-
-/* Store Services */
-.store-services {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
-.service-badge {
-  font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba($cream, 0.7);
-  background: rgba($cream, 0.05);
-  padding: 0.25rem 0.5rem;
-  border-radius: 2px;
-  border: 1px solid rgba($cream, 0.1);
 }
 
 .store-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.6rem 0.9rem;
+  gap: 0.25rem;
+  padding: 0.45rem 0.7rem;
   font-family: 'Cormorant', 'Georgia', serif;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: rgba($cream, 0.8);
   background: transparent;
@@ -487,20 +346,16 @@ $amber-deep: #2d1810;
 
 @media (max-width: 768px) {
   .boutiques {
-    padding: 100px 1rem 3rem;
+    padding: 90px 1rem 2rem;
   }
   
-  .selected-product {
-    flex-direction: column;
-    align-items: flex-start;
-    
-    .back-btn {
-      width: 100%;
-    }
+  .boutiques-header {
+    margin-bottom: 1rem;
   }
   
   .filters-container {
     flex-direction: column;
+    gap: 0.5rem;
   }
   
   .filter-group {
@@ -513,12 +368,26 @@ $amber-deep: #2d1810;
   
   .stores-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .store-card {
+    padding: 0.85rem 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .page-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .geo-btn {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.9rem;
   }
   
   .store-actions {
@@ -526,6 +395,7 @@ $amber-deep: #2d1810;
     
     .action-btn {
       justify-content: center;
+      padding: 0.5rem 0.6rem;
     }
   }
 }

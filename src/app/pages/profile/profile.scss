@@ -1,12 +1,463 @@
-/* Profile Page - Nôtéa */
+/* Profile Page - Nôtéa Luxury Design */
+
+// Variables
+$primary-gold: #d4a855;
+$gold-light: #f0d9a0;
+$dark-gold: #a68a42;
+$light-gold: rgba(212, 168, 85, 0.15);
+$bg-dark: #1a0a04;
+$bg-card: #2d1810;
+$text-primary: #faf3e8;
+$text-secondary: rgba(250, 243, 232, 0.7);
+$text-muted: rgba(250, 243, 232, 0.5);
+$border-color: rgba(212, 168, 85, 0.2);
+$success-color: #4ade80;
+$error-color: #f87171;
 
 .profile-page {
-  padding-top: 100px;
   min-height: 100vh;
+  padding: 100px 1.5rem 2rem;
+  background: linear-gradient(180deg, #1a0a04 0%, #2d1810 100%);
 }
 
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Header
+.profile-header {
+  background: rgba($bg-card, 0.6);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid $border-color;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary-gold 0%, $dark-gold 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(212, 168, 85, 0.3);
+}
+
+.avatar-initials {
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-family: 'Cinzel', serif;
+}
+
+.user-info {
+  .user-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $text-primary;
+    margin: 0 0 0.25rem;
+    font-family: 'Cinzel', serif;
+  }
+  
+  .user-email {
+    font-size: 0.9rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.btn-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  color: $text-secondary;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant', serif;
+  
+  &:hover {
+    border-color: $primary-gold;
+    color: $primary-gold;
+    background: rgba($primary-gold, 0.1);
+    
+    svg {
+      stroke: $primary-gold;
+    }
+  }
+  
+  svg {
+    transition: stroke 0.3s ease;
+  }
+}
+
+// Messages
+.messages-container {
+  margin-bottom: 1rem;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Cormorant', serif;
+  
+  &.alert-success {
+    background: rgba(74, 222, 128, 0.15);
+    color: $success-color;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+  }
+  
+  &.alert-error {
+    background: rgba(248, 113, 113, 0.15);
+    color: $error-color;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+  
+  p {
+    color: $text-secondary;
+    font-size: 0.95rem;
+    font-family: 'Cormorant', serif;
+  }
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid $border-color;
+  border-top-color: $primary-gold;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Sections
+.profile-section {
+  background: rgba($bg-card, 0.6);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid $border-color;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $border-color;
+  background: rgba($bg-dark, 0.4);
+}
+
+.section-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $light-gold;
+  border-radius: 8px;
+  
+  svg {
+    stroke: $primary-gold;
+  }
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: $text-primary;
+  margin: 0;
+  font-family: 'Cinzel', serif;
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+// Form
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  
+  &.full-width {
+    grid-template-columns: 1fr;
+    margin-bottom: 1rem;
+  }
+  
+  .span-2 {
+    grid-column: span 2;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Cormorant', serif;
+  
+  .required {
+    color: $primary-gold;
+    margin-left: 2px;
+  }
+}
+
+.form-input {
+  padding: 0.7rem 0.85rem;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: $text-primary;
+  background: rgba($bg-dark, 0.4);
+  transition: all 0.3s ease;
+  font-family: 'Cormorant', serif;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-gold;
+    box-shadow: 0 0 0 3px rgba(212, 168, 85, 0.1);
+    background: rgba($bg-dark, 0.6);
+  }
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+  
+  &.disabled,
+  &:disabled {
+    background: rgba($bg-dark, 0.2);
+    color: $text-muted;
+    cursor: not-allowed;
+    border-color: transparent;
+  }
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4a855' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+  
+  &.disabled,
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: $text-muted;
+  margin-top: 0.25rem;
+  font-family: 'Cormorant', serif;
+}
+
+// Actions
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid $border-color;
+}
+
+.btn-cancel {
+  padding: 0.7rem 1.25rem;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  color: $text-secondary;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant', serif;
+  
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: $text-secondary;
+    color: $text-primary;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background: linear-gradient(135deg, $primary-gold 0%, $dark-gold 100%);
+  border: none;
+  border-radius: 6px;
+  color: $bg-dark;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Cormorant', serif;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(212, 168, 85, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(26, 10, 4, 0.3);
+  border-top-color: $bg-dark;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+// Responsive
 @media (max-width: 768px) {
   .profile-page {
-    padding-top: 80px;
+    padding: 90px 1rem 1.5rem;
+  }
+  
+  .profile-header {
+    padding: 1.25rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .avatar-section {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .avatar {
+    width: 56px;
+    height: 56px;
+    
+    .avatar-initials {
+      font-size: 20px;
+    }
+  }
+  
+  .btn-edit {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .section-content {
+    padding: 1.25rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    
+    .span-2 {
+      grid-column: span 1;
+    }
+  }
+  
+  .profile-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .profile-section {
+    border-radius: 8px;
+  }
+  
+  .section-header {
+    padding: 1rem;
+  }
+  
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .section-title {
+    font-size: 1rem;
+  }
+  
+  .user-info .user-name {
+    font-size: 1.25rem;
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SephoraService, SephoraProduct, FilterCategory } from '../../services/sephora.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -58,8 +58,7 @@ export class ListParfums implements OnInit, OnDestroy {
   constructor(
     private sephoraService: SephoraService,
     private favoritesService: FavoritesService,
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -500,17 +499,5 @@ export class ListParfums implements OnInit, OnDestroy {
    */
   hideToast() {
     this.showToast = false;
-  }
-
-  /**
-   * Vérifie la disponibilité d'un produit en magasin
-   * Redirige vers la page boutiques avec le produit sélectionné
-   */
-  checkAvailability(event: Event, product: SephoraProduct) {
-    event.stopPropagation();
-    const productJson = encodeURIComponent(JSON.stringify(product));
-    this.router.navigate(['/boutiques'], { 
-      queryParams: { product: productJson } 
-    });
   }
 }

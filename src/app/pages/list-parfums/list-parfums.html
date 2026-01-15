@@ -312,15 +312,7 @@
           </div>
           
           <!-- Prix -->
-          <p class="product-price mt-auto mb-2">{{ formatPrice(product.currentSku.listPrice) }}</p>
-          
-          <!-- Bouton Disponibilité -->
-          <button 
-            class="btn btn-sm btn-availability w-100"
-            (click)="checkAvailability($event, product)"
-            title="Vérifier la disponibilité en magasin">
-            📍 Disponibilité en magasin
-          </button>
+          <p class="product-price mt-auto mb-0">{{ formatPrice(product.currentSku.listPrice) }}</p>
         </div>
       </div>
     </div>
