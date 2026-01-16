@@ -319,8 +319,14 @@
   </div>
 
   <!-- Pagination -->
-  <nav *ngIf="!loading && totalPages > 1 && filteredProducts.length > 0">
-    <ul class="pagination justify-content-center">
+  <nav *ngIf="!loading && totalPages > 1 && filteredProducts.length > 0" class="mt-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+      <div class="text-muted-custom small">
+        Page {{ currentPage }} sur {{ totalPages }} 
+        <span *ngIf="totalProducts > 0">({{ totalProducts }} produit{{ totalProducts > 1 ? 's' : '' }} au total)</span>
+      </div>
+    </div>
+    <ul class="pagination justify-content-center mb-0">
       <li class="page-item" [class.disabled]="currentPage === 1">
         <a class="page-link" (click)="prevPage(); $event.preventDefault()" href="#" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>

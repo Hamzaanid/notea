@@ -96,4 +96,32 @@ export class SephoraService {
     const cat = this.categories.find(c => c.categoryId === categoryId);
     return cat ? cat.count : 0;
   }
+
+  /**
+   * Récupère les produits avec filtres de parfum (pour recommandations du test de personnalité)
+   */
+  getProductsWithFragranceFilters(
+    categoryId: string,
+    fragranceFamily: string,
+    fragranceType: string,
+    page: number = 1,
+    pageSize: number = 24
+  ): Observable<any> {
+    const url = `${this.baseUrl}/us/products/v2/list`;
+    const params: any = {
+      categoryId,
+      currentPage: page.toString(),
+      pageSize: pageSize.toString(),
+      [`filters[fragranceFamily]`]: fragranceFamily,
+      [`filters[fragranceType]`]: fragranceType
+    };
+
+    return this.http.get(url, { headers: this.headers, params }).pipe(
+      catchError(error => {
+        console.error('Erreur API Sephora avec filtres:', error);
+        // En cas d'erreur, essayer sans les filtres de parfum
+        return this.getProducts(categoryId, page, pageSize);
+      })
+    );
+  }
 }

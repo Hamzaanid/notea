@@ -10,3 +10,175 @@
     padding-top: 80px;
   }
 }
+
+// Boutons de sélection du genre
+.btn-gender {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  color: var(--cream);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  
+  &.active {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  }
+}
+
+// Boutons de réponse
+.btn-answer {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  color: var(--cream);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  min-height: 80px;
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Barre de progression
+.progress {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  
+  .progress-bar {
+    transition: width 0.3s ease;
+  }
+}
+
+// Cartes produits
+.product-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+    border-color: var(--gold);
+  }
+}
+
+.product-image {
+  overflow: hidden;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card:hover & img {
+    transform: scale(1.05);
+  }
+}
+
+.product-brand {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-name {
+  color: var(--cream);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  min-height: 2.8em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-price {
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+// Bouton favori
+.favorite-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  transition: all 0.3s ease;
+  z-index: 2;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: transparent;
+    stroke: currentColor;
+  }
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--gold);
+  }
+  
+  &.active {
+    color: #e74c3c;
+    
+    svg {
+      fill: #e74c3c;
+    }
+  }
+}
+
+// Animation pour le calcul
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.spinner-border {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .btn-answer {
+    min-height: 70px;
+    font-size: 0.9rem;
+  }
+  
+  .product-image {
+    height: 200px;
+  }
+}

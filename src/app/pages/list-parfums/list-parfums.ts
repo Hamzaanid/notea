@@ -40,7 +40,7 @@ export class ListParfums implements OnInit, OnDestroy {
   
   // Pagination
   currentPage = 1;
-  pageSize = 100;
+  pageSize = 24; // Nombre de produits par page
   totalProducts = 0;
   totalPages = 0;
 
@@ -95,8 +95,17 @@ export class ListParfums implements OnInit, OnDestroy {
             this.products = response.products || [];
             this.extractBrands();
             this.applyFilters();
-            this.totalProducts = this.filteredProducts.length;
-            this.calculateTotalPages();
+            // Utiliser les données de pagination de l'API si disponibles
+            if (response.totalProducts !== undefined) {
+              this.totalProducts = response.totalProducts;
+            } else {
+              this.totalProducts = this.filteredProducts.length;
+            }
+            if (response.totalPages !== undefined) {
+              this.totalPages = response.totalPages;
+            } else {
+              this.calculateTotalPages();
+            }
             this.loading = false;
           },
           error: () => {
@@ -111,8 +120,17 @@ export class ListParfums implements OnInit, OnDestroy {
             this.products = response.products || [];
             this.extractBrands();
             this.applyFilters();
-            this.totalProducts = this.filteredProducts.length;
-            this.calculateTotalPages();
+            // Utiliser les données de pagination de l'API si disponibles
+            if (response.totalProducts !== undefined) {
+              this.totalProducts = response.totalProducts;
+            } else {
+              this.totalProducts = this.filteredProducts.length;
+            }
+            if (response.totalPages !== undefined) {
+              this.totalPages = response.totalPages;
+            } else {
+              this.calculateTotalPages();
+            }
             this.loading = false;
           },
           error: () => {
@@ -124,7 +142,13 @@ export class ListParfums implements OnInit, OnDestroy {
   }
 
   calculateTotalPages() {
-    this.totalPages = Math.ceil(this.filteredProducts.length / this.pageSize);
+    // Si on a le total de produits, calculer le nombre de pages
+    if (this.totalProducts > 0) {
+      this.totalPages = Math.ceil(this.totalProducts / this.pageSize);
+    } else {
+      // Sinon, utiliser les produits filtrés
+      this.totalPages = Math.ceil(this.filteredProducts.length / this.pageSize);
+    }
   }
 
   // ========== FILTRES AVANCÉS ==========
@@ -199,7 +223,8 @@ export class ListParfums implements OnInit, OnDestroy {
     filtered = this.sortProducts(filtered);
 
     this.filteredProducts = filtered;
-    this.currentPage = 1; // Reset à la première page après filtrage
+    // Recalculer le total de pages après filtrage
+    this.calculateTotalPages();
   }
 
   /**
@@ -254,6 +279,7 @@ export class ListParfums implements OnInit, OnDestroy {
     this.filterExclusive = false;
     this.filterLimited = false;
     this.sortBy = 'none';
+    this.currentPage = 1; // Reset à la première page après réinitialisation
     this.applyFilters();
   }
 
@@ -333,7 +359,14 @@ export class ListParfums implements OnInit, OnDestroy {
     this.loadProducts();
   }
 
+  onSortChange() {
+    // Ne pas réinitialiser la page lors du tri, juste appliquer les filtres
+    this.applyFilters();
+  }
+
   onFilterChange() {
+    // Réinitialiser à la première page lors des changements de filtres
+    this.currentPage = 1;
     this.applyFilters();
   }
 
@@ -349,27 +382,33 @@ export class ListParfums implements OnInit, OnDestroy {
   }
 
   goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+    if (page >= 1 && page !== this.currentPage) {
       this.currentPage = page;
+      // Recharger les produits pour la nouvelle page
+      this.loadProducts();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   /**
    * Récupère les produits paginés pour la page actuelle
+   * Maintenant, les produits sont déjà paginés par le serveur
    */
   getPaginatedProducts(): SephoraProduct[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    return this.filteredProducts.slice(start, end);
+    // Les produits sont déjà paginés par le serveur, on retourne juste les produits filtrés
+    return this.filteredProducts;
   }
 
   prevPage() {
-    this.goToPage(this.currentPage - 1);
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
   }
 
   nextPage() {
-    this.goToPage(this.currentPage + 1);
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
   }
 
   getPageNumbers(): number[] {

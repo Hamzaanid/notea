@@ -2,28 +2,197 @@
 <div class="test-page py-5">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-8 text-center">
+      <div class="col-lg-8">
         
-        <h1 class="h2 font-heading text-gold-light mb-3" style="letter-spacing: 2px;">
-          Test de Personnalité
-        </h1>
-        <p class="text-muted-custom mb-5">
-          Découvrez votre profil olfactif et les parfums qui vous correspondent
-        </p>
-        
-        <!-- Placeholder pour le questionnaire -->
-        <div class="card bg-transparent-dark border-gold-subtle p-5">
-          <div class="display-1 mb-4 opacity-50">🌸</div>
-          <h3 class="h5 font-heading text-gold-light mb-3">Bientôt disponible</h3>
+        <!-- ÉTAPE 1: INTRODUCTION -->
+        <div *ngIf="currentStep === 'intro'" class="text-center">
+          <h1 class="h2 font-heading text-gold-light mb-3" style="letter-spacing: 2px;">
+            Test de Personnalité
+          </h1>
           <p class="text-muted-custom mb-4">
-            Notre questionnaire personnalisé vous aidera à trouver les fragrances 
-            qui correspondent parfaitement à votre personnalité.
+            Découvre ton profil olfactif en répondant à 4 questions simples
           </p>
-          <a routerLink="/ListParfums" class="btn btn-outline-primary">
-            Explorer le catalogue
-          </a>
+          <div class="card bg-transparent-dark border-gold-subtle p-5 mb-4">
+            <div class="display-1 mb-4 opacity-50">🌸</div>
+            <h3 class="h5 font-heading text-gold-light mb-3">Trouve ton parfum idéal</h3>
+            <p class="text-muted-custom mb-4">
+              Notre questionnaire personnalisé t'aidera à découvrir les fragrances 
+              qui correspondent parfaitement à ta personnalité.
+            </p>
+            <button class="btn btn-primary" (click)="startTest()">
+              Commencer le test
+            </button>
+          </div>
         </div>
-        
+
+        <!-- ÉTAPE 2: SÉLECTION DU GENRE -->
+        <div *ngIf="currentStep === 'gender'" class="text-center">
+          <h2 class="h4 font-heading text-gold-light mb-4">Pour commencer...</h2>
+          <p class="text-muted-custom mb-4">Quel type de parfum recherches-tu ?</p>
+          
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <button 
+                class="btn btn-gender w-100 h-100 p-4"
+                [class.active]="selectedGender === 'cat1230039'"
+                (click)="selectGender('cat1230039')">
+                <div class="display-4 mb-2">👩</div>
+                <div class="fw-bold">Femme</div>
+              </button>
+            </div>
+            <div class="col-md-4">
+              <button 
+                class="btn btn-gender w-100 h-100 p-4"
+                [class.active]="selectedGender === 'cat1230040'"
+                (click)="selectGender('cat1230040')">
+                <div class="display-4 mb-2">👨</div>
+                <div class="fw-bold">Homme</div>
+              </button>
+            </div>
+            <div class="col-md-4">
+              <button 
+                class="btn btn-gender w-100 h-100 p-4"
+                [class.active]="selectedGender === 'cat5000004'"
+                (click)="selectGender('cat5000004')">
+                <div class="display-4 mb-2">⚧️</div>
+                <div class="fw-bold">Unisexe</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 3: QUESTIONS -->
+        <div *ngIf="currentStep === 'questions'">
+          <!-- Barre de progression -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <small class="text-muted-custom">Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}</small>
+              <small class="text-muted-custom">{{ getProgress() | number:'1.0-0' }}%</small>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div 
+                class="progress-bar bg-gold" 
+                [style.width.%]="getProgress()"
+                role="progressbar">
+              </div>
+            </div>
+          </div>
+
+          <!-- Question actuelle -->
+          <div *ngIf="getCurrentQuestion()" class="card bg-transparent-dark border-gold-subtle p-4 mb-4">
+            <h3 class="h5 font-heading text-gold-light mb-4 text-center">
+              {{ getCurrentQuestion()!.text }}
+            </h3>
+            
+            <div class="row g-3">
+              <div 
+                class="col-md-6" 
+                *ngFor="let answer of getCurrentQuestion()!.answers">
+                <button 
+                  class="btn btn-answer w-100 p-3 text-start"
+                  (click)="selectAnswer(answer)">
+                  {{ answer.text }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bouton précédent -->
+          <div class="text-center">
+            <button 
+              class="btn btn-outline-secondary"
+              (click)="previousQuestion()"
+              [disabled]="currentQuestionIndex === 0">
+              ← Précédent
+            </button>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 4: CALCUL -->
+        <div *ngIf="currentStep === 'calculating'" class="text-center py-5">
+          <div class="spinner-border text-gold mb-4" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <h3 class="h5 font-heading text-gold-light mb-3">Analyse de tes réponses...</h3>
+          <p class="text-muted-custom">Nous déterminons ton profil olfactif</p>
+        </div>
+
+        <!-- ÉTAPE 5: RÉSULTATS -->
+        <div *ngIf="currentStep === 'results' && testResult" class="text-center">
+          <h2 class="h3 font-heading text-gold-light mb-3">Ton profil parfum</h2>
+          
+          <!-- Profil principal -->
+          <div class="card bg-transparent-dark border-gold-subtle p-4 mb-4">
+            <div class="display-4 mb-3">✨</div>
+            <h3 class="h4 font-heading text-gold-light mb-3">
+              {{ getProfileName(testResult.profile.primaryTag) }}
+            </h3>
+            <p class="text-muted-custom mb-0">
+              {{ testResult.profile.description }}
+            </p>
+            <div *ngIf="testResult.profile.secondaryTag" class="mt-3">
+              <small class="text-muted-custom">Avec une tendance : {{ getProfileName(testResult.profile.secondaryTag) }}</small>
+            </div>
+          </div>
+
+          <!-- Erreur si pas de produits -->
+          <div *ngIf="error" class="alert alert-warning mb-4">
+            {{ error }}
+          </div>
+
+          <!-- Parfums recommandés -->
+          <div *ngIf="recommendedProducts.length > 0">
+            <h3 class="h5 font-heading text-gold-light mb-4">Parfums recommandés pour toi</h3>
+            
+            <div class="row g-4 mb-4">
+              <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let product of recommendedProducts">
+                <div class="card h-100 product-card" (click)="openProduct(product)">
+                  <!-- Bouton Favori -->
+                  <button 
+                    class="favorite-btn position-absolute top-0 end-0 m-2" 
+                    [class.active]="isFavorite(product.productId)"
+                    (click)="toggleFavorite($event, product)"
+                    [title]="isFavorite(product.productId) ? 'Retirer des favoris' : 'Ajouter aux favoris'">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  </button>
+                  
+                  <!-- Image -->
+                  <div class="product-image">
+                    <img [src]="product.heroImage" [alt]="product.displayName" class="card-img-top" loading="lazy">
+                  </div>
+                  
+                  <!-- Info -->
+                  <div class="card-body d-flex flex-column">
+                    <p class="product-brand mb-1 small">{{ product.brandName }}</p>
+                    <h6 class="card-title product-name mb-2">{{ product.displayName }}</h6>
+                    
+                    <!-- Rating -->
+                    <div class="d-flex align-items-center gap-2 mb-2" *ngIf="product.rating">
+                      <small class="text-gold fw-bold">{{ formatRating(product.rating) }}</small>
+                      <small class="text-muted-custom">({{ product.reviews }})</small>
+                    </div>
+                    
+                    <!-- Prix -->
+                    <p class="product-price mt-auto mb-0">{{ formatPrice(product.currentSku.listPrice) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <button class="btn btn-primary" (click)="restartTest()">
+              Refaire le test
+            </button>
+            <a routerLink="/ListParfums" class="btn btn-outline-primary">
+              Voir tout le catalogue
+            </a>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
