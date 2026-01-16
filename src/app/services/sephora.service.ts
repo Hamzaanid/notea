@@ -28,6 +28,61 @@ export interface FilterCategory {
   count: number;
 }
 
+export interface StoreHours {
+  closedDays?: string;
+  mondayHours?: string;
+  tuesdayHours?: string;
+  wednesdayHours?: string;
+  thursdayHours?: string;
+  fridayHours?: string;
+  saturdayHours?: string;
+  sundayHours?: string;
+  textColor?: string;
+  timeZone?: string;
+}
+
+export interface StoreAddress {
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface SephoraStore {
+  storeId: string;
+  displayName: string;
+  latitude: number;
+  longitude: number;
+  distance: number;
+  address: StoreAddress;
+  phone: string;
+  mallName?: string;
+  storeHours: StoreHours;
+  curbsideHours?: StoreHours;
+  inStoreAvailability?: number;
+  availabilityStatus?: string;
+  isRopisable?: boolean;
+  isBopisable?: boolean;
+  isCurbsideEnabled?: boolean;
+  isConciergeCurbsideEnabled?: boolean;
+  vendorName?: string;
+  storeType: string;
+  seoCanonicalUrl?: string;
+  targetUrl?: string;
+  samedayDeliveryEnabled?: boolean;
+  isOnlineReservationEnabled?: boolean;
+}
+
+export interface StoresListResponse {
+  stores?: SephoraStore[];
+}
+
+export interface AvailabilityResponse {
+  stores?: SephoraStore[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -124,4 +179,51 @@ export class SephoraService {
       })
     );
   }
+
+  /**
+   * Récupère la liste des magasins Sephora à proximité
+   * @param latitude Latitude de la position
+   * @param longitude Longitude de la position
+   * @param radius Rayon de recherche en miles (défaut: 25)
+   */
+  getStoresList(latitude: number, longitude: number, radius: number = 25): Observable<StoresListResponse> {
+    const url = `${this.baseUrl}/stores/list`;
+    const params = {
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      radius: radius.toString()
+    };
+
+    return this.http.get<StoresListResponse>(url, { headers: this.headers, params }).pipe(
+      catchError(error => {
+        console.error('Erreur récupération liste magasins Sephora:', error);
+        return of({ stores: [] });
+      })
+    );
+  }
+
+  /**
+   * Vérifie la disponibilité d'un produit dans les magasins proches
+   * @param skuId ID du SKU du produit (ex: "2210607")
+   * @param latitude Latitude de la position
+   * @param longitude Longitude de la position
+   * @param radius Rayon de recherche en miles (défaut: 25)
+   */
+  checkAvailability(skuId: string, latitude: number, longitude: number, radius: number = 25): Observable<AvailabilityResponse> {
+    const url = `${this.baseUrl}/products/check-availability`;
+    const params = {
+      skuId: skuId.toString(),
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      radius: radius.toString()
+    };
+
+    return this.http.get<AvailabilityResponse>(url, { headers: this.headers, params }).pipe(
+      catchError(error => {
+        console.error('Erreur vérification disponibilité Sephora:', error);
+        return of({ stores: [] });
+      })
+    );
+  }
 }
+

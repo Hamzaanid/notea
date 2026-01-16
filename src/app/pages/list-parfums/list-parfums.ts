@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SephoraService, SephoraProduct, FilterCategory } from '../../services/sephora.service';
 import { FavoritesService } from '../../services/favorites.service';
@@ -58,7 +58,8 @@ export class ListParfums implements OnInit, OnDestroy {
   constructor(
     private sephoraService: SephoraService,
     private favoritesService: FavoritesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -458,6 +459,31 @@ export class ListParfums implements OnInit, OnDestroy {
   openProduct(product: SephoraProduct) {
     const url = `https://www.sephora.com${product.targetUrl}`;
     window.open(url, '_blank');
+  }
+
+  /**
+   * Vérifie si le produit a un SKU ID disponible
+   */
+  hasSkuId(product: SephoraProduct): boolean {
+    return !!(product.skuId || product.currentSku?.skuId);
+  }
+
+  /**
+   * Redirige vers la page boutiques pour vérifier la disponibilité du produit
+   */
+  checkAvailability(event: Event, product: SephoraProduct) {
+    event.stopPropagation(); // Empêche l'ouverture du produit
+    
+    if (!this.hasSkuId(product)) {
+      this.displayToast('SKU non disponible pour ce produit', 'info');
+      return;
+    }
+
+    // Encoder le produit pour le passer en query param
+    const productJson = encodeURIComponent(JSON.stringify(product));
+    this.router.navigate(['/boutiques'], { 
+      queryParams: { product: productJson } 
+    });
   }
 
   // ========== FAVORIS ==========

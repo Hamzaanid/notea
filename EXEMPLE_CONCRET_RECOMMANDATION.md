@@ -308,3 +308,4 @@ calculateProfile(scores: TagScore[]): PersonalityProfile {
 
 **Voilà ! Tu comprends maintenant comment tout fonctionne ! 🎉**
 
+

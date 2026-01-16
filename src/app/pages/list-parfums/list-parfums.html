@@ -312,7 +312,16 @@
           </div>
           
           <!-- Prix -->
-          <p class="product-price mt-auto mb-0">{{ formatPrice(product.currentSku.listPrice) }}</p>
+          <p class="product-price mt-auto mb-2">{{ formatPrice(product.currentSku.listPrice) }}</p>
+          
+          <!-- Bouton Vérifier disponibilité -->
+          <button 
+            class="availability-btn w-100"
+            (click)="checkAvailability($event, product)"
+            *ngIf="hasSkuId(product)"
+            [title]="'Vérifier la disponibilité en magasin'">
+            📍 Vérifier disponibilité
+          </button>
         </div>
       </div>
     </div>

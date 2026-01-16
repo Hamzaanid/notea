@@ -228,7 +228,7 @@ getProductsWithFragranceFilters(
 {
   categoryId: 'cat1230039',                    // Femme
   currentPage: '1',
-  pageSize: '8',
+  pageSize: '',
   'filters[fragranceFamily]': 'warmspicy',    // ← Filtre principal
   'filters[fragranceType]': 'warmSweetGourmands'  // ← Filtre spécifique
 }
@@ -436,4 +436,5 @@ this.sephoraService.getProductsWithFragranceFilters(
 ---
 
 **Besoin d'aide pour modifier quelque chose ? Dis-moi ce que tu veux changer !** 🚀
+
 

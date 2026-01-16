@@ -248,6 +248,44 @@
   letter-spacing: 1px;
 }
 
+// Availability button
+.availability-btn {
+  background: transparent;
+  border: 1px solid rgba(212, 168, 85, 0.4);
+  color: var(--gold-light);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  transition: all var(--transition-normal);
+  font-family: var(--font-body);
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: rgba(212, 168, 85, 0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(212, 168, 85, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(212, 168, 85, 0.2);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(212, 168, 85, 0.2);
+  }
+}
+
 // Stars rating
 .stars {
   display: flex;
