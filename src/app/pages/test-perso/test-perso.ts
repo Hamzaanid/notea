@@ -132,6 +132,7 @@ export class TestPerso implements OnInit {
 
   /**
    * Charge les parfums recommandés selon le profil
+   * Récupère 20 produits et les trie par pertinence (rating)
    */
   loadRecommendations(profile: PersonalityProfile) {
     if (!this.selectedGender) return;
@@ -141,10 +142,14 @@ export class TestPerso implements OnInit {
       profile.fragranceFamily,
       profile.fragranceType,
       1,
-      8 // Récupérer 8 parfums recommandés
+      30 // Récupérer 30 produits pour avoir un bon choix
     ).subscribe({
       next: (response: any) => {
-        this.recommendedProducts = response.products || [];
+        const products = response.products || [];
+        
+        // Trier par rating (les mieux notés en premier) et prendre les 20 meilleurs
+        this.recommendedProducts = this.sortProductsByRelevance(products).slice(0, 20);
+        
         this.currentStep = 'results';
         this.loading = false;
       },
@@ -155,6 +160,29 @@ export class TestPerso implements OnInit {
         // Afficher quand même les résultats même sans produits
         this.currentStep = 'results';
       }
+    });
+  }
+
+  /**
+   * Trie les produits par pertinence (rating décroissant, puis nombre de reviews)
+   */
+  private sortProductsByRelevance(products: SephoraProduct[]): SephoraProduct[] {
+    return [...products].sort((a, b) => {
+      // Parser les ratings
+      const ratingA = parseFloat(a.rating) || 0;
+      const ratingB = parseFloat(b.rating) || 0;
+      
+      // Parser les nombres de reviews
+      const reviewsA = parseInt(a.reviews.replace(/,/g, '')) || 0;
+      const reviewsB = parseInt(b.reviews.replace(/,/g, '')) || 0;
+      
+      // Trier d'abord par rating (décroissant)
+      if (ratingB !== ratingA) {
+        return ratingB - ratingA;
+      }
+      
+      // Si même rating, trier par nombre de reviews (décroissant)
+      return reviewsB - reviewsA;
     });
   }
 

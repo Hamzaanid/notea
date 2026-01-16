@@ -233,11 +233,12 @@ export class PersonalityTestService {
     return this.profileNames[tag];
   }
 
-  /**
-   * Retourne la description d'un profil
-   */
+  
+ //  Retourne la description d'un profil
+  
   getProfileDescription(tag: FragranceTag): string {
     return this.profileDescriptions[tag];
   }
 }
+
 

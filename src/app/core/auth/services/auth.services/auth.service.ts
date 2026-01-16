@@ -5,7 +5,9 @@ import {
   signInWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
-  signOut
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider
 } from 'firebase/auth';
 import { from, Observable, BehaviorSubject } from 'rxjs';
 
@@ -36,7 +38,9 @@ export class AuthService {
    */
   private initializeAuthListener(): void {
     onAuthStateChanged(this.auth, (user) => {
-      if (user && user.emailVerified) {
+      // Les utilisateurs Google sont automatiquement vérifiés
+      const isVerified = user && (user.emailVerified || user.providerData.some(provider => provider.providerId === 'google.com'));
+      if (user && isVerified) {
         this.isLoggedInSubject.next(true);
         this.currentUserSubject.next(user);
       } else {
@@ -70,6 +74,14 @@ export class AuthService {
   }
 
   /**
+   * Connecte un utilisateur avec Google
+   */
+  loginWithGoogle(): Observable<any> {
+    const provider = new GoogleAuthProvider();
+    return from(signInWithPopup(this.auth, provider));
+  }
+
+  /**
    * Déconnecte l'utilisateur courant
    */
   logout(): Observable<void> {
@@ -92,10 +104,13 @@ export class AuthService {
   }
   
   /**
-   * Vérifie si un utilisateur est authentifié (connecté et email vérifié)
+   * Vérifie si un utilisateur est authentifié (connecté et email vérifié ou utilisateur Google)
    */
   get isAuthenticated(): boolean {
     const user = this.auth.currentUser;
-    return !!user && user.emailVerified;
+    if (!user) return false;
+    // Les utilisateurs Google sont automatiquement vérifiés
+    const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+    return user.emailVerified || isGoogleUser;
   }
 }

@@ -18,13 +18,17 @@ export class AuthGuard implements CanActivate {
 
   /**
    * Vérifie si l'utilisateur peut accéder à la route
-   * @returns true si connecté et email vérifié, sinon redirige vers /login
+   * @returns true si connecté et email vérifié (ou utilisateur Google), sinon redirige vers /login
    */
   canActivate(): boolean | UrlTree {
     const user = this.auth.currentUser;
 
-    if (user && user.emailVerified) {
-      return true;
+    if (user) {
+      // Les utilisateurs Google sont automatiquement vérifiés
+      const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+      if (user.emailVerified || isGoogleUser) {
+        return true;
+      }
     }
 
     return this.router.parseUrl('/login');

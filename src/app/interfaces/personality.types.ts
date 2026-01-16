@@ -42,3 +42,4 @@ export interface TestResult {
   selectedGender: 'cat1230039' | 'cat1230040' | 'cat5000004'; // Femme, Homme, Unisexe
 }
 
+

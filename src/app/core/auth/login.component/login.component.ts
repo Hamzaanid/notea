@@ -69,6 +69,26 @@ export class LoginComponent {
   }
 
   /**
+   * Connexion avec Google
+   */
+  loginWithGoogle(): void {
+    this.loading = true;
+    this.clearMessages();
+
+    this.authService.loginWithGoogle().subscribe({
+      next: (userCredential) => {
+        this.loading = false;
+        // Les utilisateurs Google sont automatiquement vérifiés, pas besoin de vérifier emailVerified
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = this.getGoogleLoginErrorMessage(err.code);
+      }
+    });
+  }
+
+  /**
    * Ouvre le modal de réinitialisation du mot de passe
    */
   openResetModal(): void {
@@ -135,5 +155,15 @@ export class LoginComponent {
       'auth/invalid-email': 'Email invalide.'
     };
     return messages[code] ?? "Erreur lors de l'envoi. Réessayez.";
+  }
+
+  private getGoogleLoginErrorMessage(code: string): string {
+    const messages: Record<string, string> = {
+      'auth/popup-closed-by-user': 'Connexion annulée.',
+      'auth/popup-blocked': 'Popup bloquée. Autorisez les popups pour ce site.',
+      'auth/cancelled-popup-request': 'Connexion annulée.',
+      'auth/account-exists-with-different-credential': 'Un compte existe déjà avec cet email.'
+    };
+    return messages[code] ?? 'Erreur lors de la connexion avec Google. Réessayez.';
   }
 }

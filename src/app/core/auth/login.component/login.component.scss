@@ -78,6 +78,43 @@
   }
 }
 
+// Divider
+.divider {
+  color: rgba(250, 243, 232, 0.4);
+}
+
+// Google Button
+.btn-google {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(212, 168, 85, 0.3);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 168, 85, 0.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
 // Responsive
 @media (max-width: 576px) {
   .auth-page {
